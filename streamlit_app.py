@@ -4,7 +4,6 @@ import numpy as np
 import sklearn
 import yfinance as yf
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import datetime
 
 # fetch and clean data
@@ -117,10 +116,7 @@ for i in range(1, len(smaEx)):
 
 # basic plot
 print()
-fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
-                    row_heights=[0.7, 0.3],
-                    vertical_spacing=0.05,
-                    subplot_titles=[f'2600.HK Candlestick', 'Cumulative Idiosyncratic Movement'])
+fig = go.Figure()
 
 df = pd.concat([df, futureDf], ignore_index=True)
 ha = pd.concat([ha, futureDf], ignore_index=True)
@@ -134,7 +130,7 @@ fig.add_trace(go.Candlestick(
   decreasing_fillcolor='rgba(200,0,0,0.2)',
   opacity=1,
   name='Heikin Ashi'
-), row=1, col=1)
+))
 
 fig.add_trace(go.Candlestick(
   x=df['Date'],
@@ -148,16 +144,16 @@ fig.add_trace(go.Candlestick(
   opacity=1,
   name='Raw Candlestick',
   showlegend=False
-), row=1, col=1)
+))
 
 abDf = pd.concat([abDf, futureDf], ignore_index=True)
-fig.add_trace(go.Scatter(
-  x=abDf["Date"],
-  y=abDf['Cumulative_residual'],
-  mode='lines',
-  name='Cumulative Idiosyncratic Movement',
-  line=dict(color='black', width=1.5)
-), row=2, col=1)
+#fig.add_trace(go.Scatter(
+#  x=abDf["Date"],
+#  y=abDf['Cumulative_residual'],
+#  mode='lines',
+#  name='Cumulative Idiosyncratic Movement',
+#  line=dict(color='black', width=1.5)
+#))
 
 for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
   visibility = True if sma_label in [support_best['label'], resistance_best['label']] else 'legendonly'
@@ -168,7 +164,7 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     name=sma_label,
     line=dict(width=1.5, color="black"),
     visible=visibility
-  ), row=1, col=1)
+  ))
 
 # Add layout
 fig.update_layout(
@@ -189,15 +185,6 @@ fig.update_layout(
     spikemode='across',
     spikethickness=2
   ),
-  xaxis2=dict(
-    type='category',
-    showspikes=False,
-    spikecolor='rgba(0,0,0,0)',
-    spikedash='solid',
-    spikesnap='cursor',
-    spikemode='across',
-    spikethickness=2,
-  ),
   yaxis=dict(
     showspikes=True,
     spikecolor='rgba(0,0,0,0.3)',
@@ -213,7 +200,6 @@ for crossDate in gCrosses:
   fig.add_vline(
     x=crossDate,
     line=dict(color="rgba(252, 194, 3, 0.5)", width=1.5),
-    row=1, col=1
   )
   fig.add_annotation(
     xref="x",
@@ -225,14 +211,12 @@ for crossDate in gCrosses:
     text="GC",
     font=dict(size=10, color="orange"),
     bgcolor="rgba(255, 255, 255, 0.7)",
-    row=1, col=1
   )
 
 for crossDate in dCrosses:
   fig.add_vline(
     x=crossDate,
     line=dict(color="rgba(127, 127, 127, 0.5)", width=1.5),
-    row=1, col=1
   )
   fig.add_annotation(
     xref="x",
@@ -244,7 +228,6 @@ for crossDate in dCrosses:
     text="DC",
     font=dict(size=10, color="gray"),
     bgcolor="rgba(255, 255, 255, 0.7)",
-    row=1, col=1
   )
 
 st.plotly_chart(fig)
