@@ -169,9 +169,7 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
 # Add layout
 fig.update_layout(
   title=f"2600.HK Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
-  xaxis2_title="Date",
-  yaxis1_title="Price",
-  yaxis2_title="Cumulative Residuals",
+  yaxis_title="Price",
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
