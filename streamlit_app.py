@@ -126,8 +126,8 @@ fig.add_trace(go.Candlestick(
   low=ha['HA_Low'], close=ha['HA_Close'],
   increasing_line_color='rgba(0,200,0,0)',  # light green
   decreasing_line_color='rgba(200,0,0,0)',  # light red
-  increasing_fillcolor='rgba(0,200,0,0.2)',
-  decreasing_fillcolor='rgba(200,0,0,0.2)',
+  increasing_fillcolor='rgba(0,200,0,0.5)',
+  decreasing_fillcolor='rgba(200,0,0,0.5)',
   opacity=1,
   name='Heikin Ashi'
 ))
@@ -162,7 +162,7 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     y=df[sma_label],
     mode='lines',
     name=sma_label,
-    line=dict(width=1.5, color="black"),
+    line=dict(width=1.5, color="white"),
     visible=visibility
   ))
 
@@ -185,7 +185,7 @@ fig.update_layout(
   ),
   yaxis=dict(
     showspikes=True,
-    spikecolor='rgba(0,0,0,0.3)',
+    spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
     spikesnap='cursor',
     spikemode='across',
