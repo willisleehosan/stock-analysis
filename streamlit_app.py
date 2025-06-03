@@ -195,41 +195,6 @@ fig.update_layout(
   )
 )
 
-# annotations
-for crossDate in gCrosses:
-  fig.add_vline(
-    x=crossDate,
-    line=dict(color="rgba(252, 194, 3, 0.5)", width=1.5),
-  )
-  fig.add_annotation(
-    xref="x",
-    yref="paper",
-    yanchor="bottom",
-    x=crossDate,
-    y=1.0,
-    showarrow=False,
-    text="GC",
-    font=dict(size=10, color="orange"),
-    bgcolor="rgba(255, 255, 255, 0.7)",
-  )
-
-for crossDate in dCrosses:
-  fig.add_vline(
-    x=crossDate,
-    line=dict(color="rgba(127, 127, 127, 0.5)", width=1.5),
-  )
-  fig.add_annotation(
-    xref="x",
-    yref="paper",
-    yanchor="bottom",
-    x=crossDate,
-    y=1.0,
-    showarrow=False,
-    text="DC",
-    font=dict(size=10, color="gray"),
-    bgcolor="rgba(255, 255, 255, 0.7)",
-  )
-
 st.plotly_chart(fig)
 #st.title("🎈 My new app")
 #st.write(
