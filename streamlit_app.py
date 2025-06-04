@@ -4,6 +4,7 @@ import numpy as np
 import sklearn
 import yfinance as yf
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import datetime
 
 # fetch and clean data
@@ -116,7 +117,10 @@ for i in range(1, len(smaEx)):
 
 # basic plot
 print()
-fig = go.Figure()
+fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
+                    row_heights=[0.7, 0.3],
+                    vertical_spacing=0.05,
+                    subplot_titles=[f'2600.HK Candlestick', 'Cumulative Idiosyncratic Movement'])
 
 df = pd.concat([df, futureDf], ignore_index=True)
 ha = pd.concat([ha, futureDf], ignore_index=True)
@@ -130,7 +134,7 @@ fig.add_trace(go.Candlestick(
   decreasing_fillcolor='rgba(200,0,0,0.5)',
   opacity=1,
   name='Heikin Ashi'
-))
+), row=1, col=1)
 
 fig.add_trace(go.Candlestick(
   x=df['Date'],
@@ -144,16 +148,16 @@ fig.add_trace(go.Candlestick(
   opacity=1,
   name='Raw Candlestick',
   showlegend=False
-))
+), row=1, col=1)
 
 abDf = pd.concat([abDf, futureDf], ignore_index=True)
-#fig.add_trace(go.Scatter(
-#  x=abDf["Date"],
-#  y=abDf['Cumulative_residual'],
-#  mode='lines',
-#  name='Cumulative Idiosyncratic Movement',
-#  line=dict(color='black', width=1.5)
-#))
+fig.add_trace(go.Scatter(
+  x=abDf["Date"],
+  y=abDf['Cumulative_residual'],
+  mode='lines',
+  name='Cumulative Idiosyncratic Movement',
+  line=dict(color='white', width=1)
+), row=2, col=1)
 
 for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
   visibility = True if sma_label in [support_best['label'], resistance_best['label']] else 'legendonly'
@@ -164,24 +168,35 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     name=sma_label,
     line=dict(width=1.5, color="white"),
     visible=visibility
-  ))
+  ), row=1, col=1)
 
 # Add layout
 fig.update_layout(
   title=f"2600.HK Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
-  yaxis_title="Price",
+  xaxis2_title="Date",
+  yaxis1_title="Price",
+  yaxis2_title="Cumulative Residuals",
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
   spikedistance=-1,
   xaxis=dict(
     type='category',
-    showspikes=False,
-    spikecolor='rgba(0,0,0,0)',
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
     spikesnap='cursor',
     spikemode='across',
     spikethickness=2
+  ),
+  xaxis2=dict(
+    type='category',
+    showspikes=False,
+    spikecolor='rgba(255,255,255,0)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2,
   ),
   yaxis=dict(
     showspikes=True,
