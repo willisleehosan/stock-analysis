@@ -105,6 +105,8 @@ def gdCross(df):
 
   return gCrosses, dCrosses
 
+ticker = st.text_input("Ticker", "2600") + ".HK"
+
 # market data
 marketDf = yf.download("^HSI", period="1y")
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
@@ -116,7 +118,7 @@ futureDates = [pd.to_datetime(marketDf["Date"].iloc[-1]) + pd.tseries.offsets.BD
 futureDatesStr = [d.strftime("%Y-%m-%d") for d in futureDates]
 futureDf = pd.DataFrame({"Date": futureDatesStr})
 
-df = fetchData("2600.HK")
+df = fetchData(ticker)
 df = heikinashi(df)
 alpha, beta = alphabeta(df)
 df["10SMA"] = df["Close"].rolling(window=10).mean()
@@ -172,7 +174,7 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
 
 # Add layout
 fig.update_layout(
-  title=f"2600.HK Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
+  title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   xaxis_title="Date",
   yaxis_title="Price",
   height=600,
