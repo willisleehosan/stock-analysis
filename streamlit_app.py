@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 import datetime
 
 def fetchData(ticker):
-  df = yf.download(ticker, start=datetime.datetime.today() - datetime.timedelta(days=365), end=datetime.datetime.today())
+  df = yf.download(ticker, period="1y")
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   df = df.reset_index()
   df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
@@ -106,7 +106,7 @@ def gdCross(df):
   return gCrosses, dCrosses
 
 # market data
-marketDf = yf.download("^HSI", start=datetime.datetime.today() - datetime.timedelta(days=365), end=datetime.datetime.today())
+marketDf = yf.download("^HSI", period="1y")
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
 marketDf = marketDf.reset_index()
 marketDf["Date"] = marketDf["Date"].dt.strftime("%Y-%m-%d")
@@ -116,7 +116,7 @@ futureDates = [pd.to_datetime(marketDf["Date"].iloc[-1]) + pd.tseries.offsets.BD
 futureDatesStr = [d.strftime("%Y-%m-%d") for d in futureDates]
 futureDf = pd.DataFrame({"Date": futureDatesStr})
 
-df = fetchData("HKG:2600")
+df = fetchData("2600.HK")
 df = heikinashi(df)
 alpha, beta = alphabeta(df)
 df["10SMA"] = df["Close"].rolling(window=10).mean()
