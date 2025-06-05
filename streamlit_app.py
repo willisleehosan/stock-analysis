@@ -129,7 +129,6 @@ gCrosses, dCrosses = gdCross(df)
 # basic plot
 print()
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
-                    row_heights=[0.7, 0.3],
                     vertical_spacing=0.05,
                     subplot_titles=[f'2600.HK Candlestick', 'Cumulative Idiosyncratic Movement'])
 
