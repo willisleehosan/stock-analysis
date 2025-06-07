@@ -129,7 +129,7 @@ support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df)
 
 # basic plot
-print()
+print(df["Date"])
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
                     subplot_titles=[f'2600.HK Candlestick', 'Cumulative Idiosyncratic Movement'])
@@ -139,10 +139,10 @@ fig.add_trace(go.Candlestick(
   x=df['Date'],
   open=df['HA_Open'], high=df['HA_High'],
   low=df['HA_Low'], close=df['HA_Close'],
-  increasing_line_color='rgba(0,200,0,0.5)',  # light green
-  decreasing_line_color='rgba(200,0,0,0.5)',  # light red
-  increasing_fillcolor='rgba(0,200,0,0.5)',
-  decreasing_fillcolor='rgba(200,0,0,0.5)',
+  increasing_line_color='rgba(0,100,0,0.5)',  # light green
+  decreasing_line_color='rgba(100,0,0,0.5)',  # light red
+  increasing_fillcolor='rgba(0,100,0,0.5)',
+  decreasing_fillcolor='rgba(100,0,0,0.5)',
   opacity=1,
   name='Heikin Ashi', 
   hoverinfo="skip"
@@ -173,10 +173,6 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     visible=visibility, 
     hoverinfo="skip"
   ), row=1, col=1)
-
-print(df["Date"].iloc[-91])
-print(df["Date"].iloc[-1])
-print("hi")
 
 # Add layout
 fig.update_layout(
