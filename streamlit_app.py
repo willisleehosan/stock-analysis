@@ -145,7 +145,7 @@ fig.add_trace(go.Candlestick(
   decreasing_fillcolor='rgba(100,0,0,0.5)',
   opacity=1,
   name='Heikin Ashi', 
-  hovertext=""
+  hoverinfo="none"
 ), row=1, col=1)
 
 fig.add_trace(go.Candlestick(
@@ -159,7 +159,7 @@ fig.add_trace(go.Candlestick(
   line_width=1,
   opacity=1,
   name='Raw Candlestick',
-  hovertext=""
+  hoverinfo="none"
 ), row=1, col=1)
 
 for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
@@ -171,7 +171,7 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     name=sma_label,
     line=dict(width=1.5, color="white"),
     visible=visibility, 
-    hovertext=""
+    hoverinfo="none"
   ), row=1, col=1)
 
 # Add layout
