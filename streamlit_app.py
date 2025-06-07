@@ -174,6 +174,10 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     hoverinfo="skip"
   ), row=1, col=1)
 
+print(df["Date"].iloc[-91])
+print(df["Date"].iloc[-1])
+print("hi")
+
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
@@ -205,10 +209,6 @@ fig.update_layout(
     spikethickness=2,
   )
 )
-
-print(df["Date"].iloc[-91])
-print(df["Date"].iloc[-1])
-print("hi")
 
 st.plotly_chart(fig)
 #st.title("🎈 My new app")
