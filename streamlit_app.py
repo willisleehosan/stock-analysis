@@ -184,8 +184,11 @@ fig.update_layout(
   hovermode="x unified",
   spikedistance=-1,
   xaxis=dict(
-    range=[df["Date"].iloc[-91], df["Date"].iloc[-1]],
     type='category',
+    categoryorder="array",
+    categoryarray=df["Date"].tolist(),
+    range=[df["Date"].iloc[-61], df["Date"].iloc[-1]],
+    autorange=False,
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
