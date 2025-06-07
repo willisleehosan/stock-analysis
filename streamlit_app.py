@@ -185,8 +185,6 @@ fig.update_layout(
   spikedistance=-1,
   xaxis=dict(
     type='category',
-    categoryorder="array",
-    categoryarray=df["Date"].tolist(),
     range=[df["Date"].iloc[-91], df["Date"].iloc[-1]],
     autorange=False,
     showspikes=True,
