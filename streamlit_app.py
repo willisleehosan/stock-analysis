@@ -198,7 +198,7 @@ fig.update_layout(
     spikemode='across',
     spikethickness=2
   ),
-  yaxis=dict(
+  yaxis1=dict(
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
