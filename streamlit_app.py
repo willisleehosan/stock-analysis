@@ -129,7 +129,7 @@ support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df)
 
 # basic plot
-print(df["Date"])
+print(df)
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
                     subplot_titles=[f'2600.HK Candlestick', 'Cumulative Idiosyncratic Movement'])
@@ -145,7 +145,7 @@ fig.add_trace(go.Candlestick(
   decreasing_fillcolor='rgba(100,0,0,0.5)',
   opacity=1,
   name='Heikin Ashi', 
-  hoverinfo="skip"
+  hovertemplate=""
 ), row=1, col=1)
 
 fig.add_trace(go.Candlestick(
@@ -159,7 +159,7 @@ fig.add_trace(go.Candlestick(
   line_width=1,
   opacity=1,
   name='Raw Candlestick',
-  hoverinfo="skip"
+  hovertemplate=""
 ), row=1, col=1)
 
 for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
