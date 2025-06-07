@@ -129,7 +129,9 @@ support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df)
 
 # basic plot
-print(df)
+print(df["Date"].iloc[-5:])
+print(df["Date"].tolist()[-5:])
+
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
                     subplot_titles=[f'2600.HK Candlestick', 'Cumulative Idiosyncratic Movement'])
