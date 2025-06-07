@@ -134,7 +134,7 @@ st.write(df["Date"].tolist()[-5:])
 
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
-                    subplot_titles=[f'2600.HK Candlestick', 'Cumulative Idiosyncratic Movement'])
+                    subplot_titles=[f'2600.HK Candlestick'])
 
 df = pd.concat([df, futureDf], ignore_index=True)
 fig.add_trace(go.Candlestick(
