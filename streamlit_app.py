@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 import datetime
 
 def fetchData(ticker):
-  df = yf.download(ticker, period="1y")
+  df = yf.download(ticker, period="2y")
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   df = df.reset_index()
   df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
@@ -108,7 +108,7 @@ def gdCross(df):
 ticker = st.text_input("Ticker", "2600") + ".HK"
 
 # market data
-marketDf = yf.download("^HSI", period="1y")
+marketDf = yf.download("^HSI", period="2y")
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
 marketDf = marketDf.reset_index()
 marketDf["Date"] = marketDf["Date"].dt.strftime("%Y-%m-%d")
@@ -144,7 +144,8 @@ fig.add_trace(go.Candlestick(
   increasing_fillcolor='rgba(0,200,0,0.5)',
   decreasing_fillcolor='rgba(200,0,0,0.5)',
   opacity=1,
-  name='Heikin Ashi'
+  name='Heikin Ashi', 
+  hoverinfo="skip"
 ), row=1, col=1)
 
 fig.add_trace(go.Candlestick(
@@ -158,7 +159,7 @@ fig.add_trace(go.Candlestick(
   line_width=1,
   opacity=1,
   name='Raw Candlestick',
-  showlegend=False
+  hoverinfo="skip"
 ), row=1, col=1)
 
 for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
@@ -169,7 +170,8 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     mode='lines',
     name=sma_label,
     line=dict(width=1.5, color="white"),
-    visible=visibility
+    visible=visibility, 
+    hoverinfo="skip"
   ), row=1, col=1)
 
 # Add layout
@@ -183,6 +185,7 @@ fig.update_layout(
   spikedistance=-1,
   xaxis=dict(
     type='category',
+    range=[df["Date"].iloc[-91], df["Date"].iloc[-1]],
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
