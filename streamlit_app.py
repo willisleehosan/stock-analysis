@@ -206,7 +206,9 @@ fig.update_layout(
   )
 )
 
-print([df["Date"].iloc[-91], df["Date"].iloc[-1]])
+print(df["Date"].iloc[-91])
+print(df["Date"].iloc[-1])
+print("hi")
 
 st.plotly_chart(fig)
 #st.title("🎈 My new app")
