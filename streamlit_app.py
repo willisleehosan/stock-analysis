@@ -139,8 +139,8 @@ fig.add_trace(go.Candlestick(
   x=df['Date'],
   open=df['HA_Open'], high=df['HA_High'],
   low=df['HA_Low'], close=df['HA_Close'],
-  increasing_line_color='rgba(0,200,0,0)',  # light green
-  decreasing_line_color='rgba(200,0,0,0)',  # light red
+  increasing_line_color='rgba(0,200,0,0.5)',  # light green
+  decreasing_line_color='rgba(200,0,0,0.5)',  # light red
   increasing_fillcolor='rgba(0,200,0,0.5)',
   decreasing_fillcolor='rgba(200,0,0,0.5)',
   opacity=1,
@@ -205,6 +205,8 @@ fig.update_layout(
     spikethickness=2,
   )
 )
+
+print([df["Date"].iloc[-91], df["Date"].iloc[-1]])
 
 st.plotly_chart(fig)
 #st.title("🎈 My new app")
