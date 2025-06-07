@@ -189,7 +189,7 @@ fig.update_layout(
     type='category',
     categoryorder='array',
     categoryarray=df["Date"].tolist(),
-    range=[df["Date"].iloc[-91], df["Date"].iloc[-1]],
+    range=[len(df)-91, len(df)-1],
     autorange=False,
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
