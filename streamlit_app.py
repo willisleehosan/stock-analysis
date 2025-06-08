@@ -250,6 +250,7 @@ for i in range(0, 6):
   ), row=1, col=1)
 
 # Add layout
+fig.update_traces(connectgaps=True)
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   xaxis_title="Date",
