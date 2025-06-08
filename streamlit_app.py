@@ -229,7 +229,6 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     hoverinfo="none"
   ), row=1, col=1)
 
-st.write(df["zz1Hi"])
 for i in range(0, 6):
   fig.add_trace(go.Scatter(
     x=df["Date"], 
@@ -237,7 +236,8 @@ for i in range(0, 6):
     mode="lines", 
     name=f"Zig Zag-{i} High", 
     line=dict(width=1.5, color="yellow"), 
-    hoverinfo="none"
+    hoverinfo="none", 
+    connectgaps=True
   ), row=1, col=1)
   
   fig.add_trace(go.Scatter(
@@ -250,7 +250,6 @@ for i in range(0, 6):
   ), row=1, col=1)
 
 # Add layout
-fig.update_traces(connectgaps=True)
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   xaxis_title="Date",
