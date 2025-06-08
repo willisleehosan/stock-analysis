@@ -141,7 +141,7 @@ def zigzag(high, low):
   lastPt = 0
   for i in range(2, len(low)):
     if math.isnan(low.iloc[i]):
-      newHigh.append(float("nan"))
+      newLow.append(float("nan"))
       continue
       
     if ((low.iloc[i] - low.iloc[i-1]) < (low.iloc[i-1] - low.iloc[i-2])):
