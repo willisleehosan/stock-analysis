@@ -141,7 +141,7 @@ def zigzag(arr, func):
         slopeMin = max(slopeMin, (arr.iloc[i]*(1-threshold) - arr.iloc[lastAnc]) / (i + lastAnc))
     last2Pt = lastPt
     lastPt = i
-  newArr.append(arr.iloc[-1])
+  newArr.append(arr.iloc[lastAnc] + (slopeMax+slopeMin)*(len(arr)-1 - lastAnc)/2)
   return newArr
 
 ticker = st.text_input("Ticker", "2600") + ".HK"
@@ -226,7 +226,8 @@ for i in range(0, 6):
     name=f"Zig Zag-{i} High", 
     line=dict(width=1.5, color="yellow"), 
     hoverinfo="none", 
-    connectgaps=True
+    connectgaps=True, 
+    visibility="legendonly"
   ), row=1, col=1)
   
   fig.add_trace(go.Scatter(
@@ -236,7 +237,8 @@ for i in range(0, 6):
     name=f"Zig Zag-{i} Low", 
     line=dict(width=1.5, color="yellow"), 
     hoverinfo="none", 
-    connectgaps=True
+    connectgaps=True, 
+    visibility="legendonly"
   ), row=1, col=1)
 
 # Add layout
