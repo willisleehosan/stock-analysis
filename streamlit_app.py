@@ -229,6 +229,7 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     hoverinfo="none"
   ), row=1, col=1)
 
+st.write(df["zz1Hi"])
 for i in range(0, 6):
   fig.add_trace(go.Scatter(
     x=df["Date"], 
