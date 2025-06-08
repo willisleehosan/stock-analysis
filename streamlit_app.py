@@ -116,13 +116,13 @@ def zigzag(high, low):
     else: 
       if ((high.iloc[i]*0.98 - high.iloc[lastPt]) / (i - lastPt)) > highMax:
         newHigh.append(high.iloc[i-1])
-        highMax = high.iloc[i]*1.05 - high.iloc[i-1]
-        highMin = high.iloc[i]*0.95 - high.iloc[i-1]
+        highMax = high.iloc[i]*1.02 - high.iloc[i-1]
+        highMin = high.iloc[i]*0.98 - high.iloc[i-1]
         lastPt = i-1
       elif ((high.iloc[i]*1.02 - high.iloc[lastPt]) / (i - lastPt)) < highMin:
         newHigh.append(high.iloc[i-1])
-        highMax = high.iloc[i]*1.05 - high.iloc[i-1]
-        highMin = high.iloc[i]*0.95 - high.iloc[i-1]
+        highMax = high.iloc[i]*1.02 - high.iloc[i-1]
+        highMin = high.iloc[i]*0.98 - high.iloc[i-1]
         lastPt = i-1
       else: 
         newHigh.append(float("nan"))
@@ -246,7 +246,8 @@ for i in range(0, 6):
     mode="lines", 
     name=f"Zig Zag-{i} Low", 
     line=dict(width=1.5, color="yellow"), 
-    hoverinfo="none"
+    hoverinfo="none", 
+    connectgaps=True
   ), row=1, col=1)
 
 # Add layout
