@@ -1,4 +1,5 @@
 import streamlit as st
+import math
 import pandas as pd
 import numpy as np
 import sklearn
@@ -107,51 +108,59 @@ def gdCross(df):
 
 def zigzag(high, low):
   newHigh = [high.iloc[0]]
-  highMax = high.iloc[1]*1.02 - high.iloc[0]
-  highMin = high.iloc[1]*0.98 - high.iloc[0]
+  highMax = high.iloc[1]*1.01 - high.iloc[0]
+  highMin = high.iloc[1]*0.99 - high.iloc[0]
   lastPt = 0
   for i in range(2, len(high)):
+    if math.isnan(high.iloc[i]):
+      newHigh.append(float("nan"))
+      continue
+    
     if ((high.iloc[i] - high.iloc[i-1]) > (high.iloc[i-1] - high.iloc[i-2])):
       newHigh.append(float("nan"))
     else: 
-      if ((high.iloc[i]*0.98 - high.iloc[lastPt]) / (i - lastPt)) > highMax:
+      if ((high.iloc[i]*0.99 - high.iloc[lastPt]) / (i - lastPt)) > highMax:
         newHigh.append(high.iloc[i-1])
-        highMax = high.iloc[i]*1.02 - high.iloc[i-1]
-        highMin = high.iloc[i]*0.98 - high.iloc[i-1]
+        highMax = high.iloc[i]*1.01 - high.iloc[i-1]
+        highMin = high.iloc[i]*0.99 - high.iloc[i-1]
         lastPt = i-1
-      elif ((high.iloc[i]*1.02 - high.iloc[lastPt]) / (i - lastPt)) < highMin:
+      elif ((high.iloc[i]*1.01 - high.iloc[lastPt]) / (i - lastPt)) < highMin:
         newHigh.append(high.iloc[i-1])
-        highMax = high.iloc[i]*1.02 - high.iloc[i-1]
-        highMin = high.iloc[i]*0.98 - high.iloc[i-1]
+        highMax = high.iloc[i]*1.01 - high.iloc[i-1]
+        highMin = high.iloc[i]*0.99 - high.iloc[i-1]
         lastPt = i-1
       else: 
         newHigh.append(float("nan"))
-        highMax = min(highMax, (high.iloc[i]*1.02 - high.iloc[lastPt]) / (i - lastPt))
-        highMin = max(highMin, (high.iloc[i]*0.98 - high.iloc[lastPt]) / (i - lastPt))
+        highMax = min(highMax, (high.iloc[i]*1.01 - high.iloc[lastPt]) / (i - lastPt))
+        highMin = max(highMin, (high.iloc[i]*0.99 - high.iloc[lastPt]) / (i - lastPt))
   newHigh.append(high.iloc[-1])
 
   newLow = [low.iloc[0]]
-  lowMax = low.iloc[1]*1.02 - low.iloc[0]
-  lowMin = low.iloc[1]*0.98 - low.iloc[0]
+  lowMax = low.iloc[1]*1.01 - low.iloc[0]
+  lowMin = low.iloc[1]*0.99 - low.iloc[0]
   lastPt = 0
   for i in range(2, len(low)):
+    if math.isnan(low.iloc[i]):
+      newHigh.append(float("nan"))
+      continue
+      
     if ((low.iloc[i] - low.iloc[i-1]) < (low.iloc[i-1] - low.iloc[i-2])):
       newLow.append(float("nan"))
     else:
-      if ((low.iloc[i]*0.98 - low.iloc[lastPt]) / (i - lastPt)) > lowMax:
+      if ((low.iloc[i]*0.99 - low.iloc[lastPt]) / (i - lastPt)) > lowMax:
         newLow.append(low.iloc[i-1])
-        lowMax = low.iloc[i]*1.02 - low.iloc[i-1]
-        lowMin = low.iloc[i]*0.98 - low.iloc[i-1]
+        lowMax = low.iloc[i]*1.01 - low.iloc[i-1]
+        lowMin = low.iloc[i]*0.99 - low.iloc[i-1]
         lastPt = i-1
-      elif ((low.iloc[i]*1.02 - low.iloc[lastPt]) / (i - lastPt)) < lowMin:
+      elif ((low.iloc[i]*1.01 - low.iloc[lastPt]) / (i - lastPt)) < lowMin:
         newLow.append(low.iloc[i-1])
-        lowMax = low.iloc[i]*1.02 - low.iloc[i-1]
-        lowMin = low.iloc[i]*0.98 - low.iloc[i-1]
+        lowMax = low.iloc[i]*1.01 - low.iloc[i-1]
+        lowMin = low.iloc[i]*0.99 - low.iloc[i-1]
         lastPt = i-1
       else:
         newLow.append(float("nan"))
-        lowMax = min(lowMax, (low.iloc[i]*1.02 - low.iloc[lastPt]) / (i - lastPt))
-        lowMin = max(lowMin, (low.iloc[i]*0.98 - low.iloc[lastPt]) / (i - lastPt))
+        lowMax = min(lowMax, (low.iloc[i]*1.01 - low.iloc[lastPt]) / (i - lastPt))
+        lowMin = max(lowMin, (low.iloc[i]*0.99 - low.iloc[lastPt]) / (i - lastPt))
   newLow.append(low.iloc[-1])
 
   return newHigh, newLow
