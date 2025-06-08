@@ -109,7 +109,7 @@ def gdCross(df):
 def zigzag(arr, func):
   threshold = 0.005
 
-  newArr = [float("nan")] * len(arr)
+  newArr = [float("nan")] * (len(arr)-1)
   newArr[0] = arr.iloc[0]
   slopeMax = float("inf")
   slopeMin = float("-inf")
