@@ -227,7 +227,7 @@ for i in range(0, 6):
     line=dict(width=1.5, color="yellow"), 
     hoverinfo="none", 
     connectgaps=True, 
-    visibility="legendonly"
+    visible="legendonly"
   ), row=1, col=1)
   
   fig.add_trace(go.Scatter(
@@ -238,7 +238,7 @@ for i in range(0, 6):
     line=dict(width=1.5, color="yellow"), 
     hoverinfo="none", 
     connectgaps=True, 
-    visibility="legendonly"
+    visible="legendonly"
   ), row=1, col=1)
 
 # Add layout
