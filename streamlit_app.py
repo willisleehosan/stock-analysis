@@ -106,64 +106,43 @@ def gdCross(df):
 
   return gCrosses, dCrosses
 
-def zigzag(high, low):
-  newHigh = [high.iloc[0]]
-  highMax = high.iloc[1]*1.01 - high.iloc[0]
-  highMin = high.iloc[1]*0.99 - high.iloc[0]
-  lastPt = 0
-  for i in range(2, len(high)):
-    if math.isnan(high.iloc[i]):
-      newHigh.append(float("nan"))
-      continue
-    
-    if ((high.iloc[i] - high.iloc[i-1]) > (high.iloc[i-1] - high.iloc[i-2])):
-      newHigh.append(float("nan"))
-    else: 
-      if ((high.iloc[i]*0.99 - high.iloc[lastPt]) / (i - lastPt)) > highMax:
-        newHigh.append(high.iloc[i-1])
-        highMax = high.iloc[i]*1.01 - high.iloc[i-1]
-        highMin = high.iloc[i]*0.99 - high.iloc[i-1]
-        lastPt = i-1
-      elif ((high.iloc[i]*1.01 - high.iloc[lastPt]) / (i - lastPt)) < highMin:
-        newHigh.append(high.iloc[i-1])
-        highMax = high.iloc[i]*1.01 - high.iloc[i-1]
-        highMin = high.iloc[i]*0.99 - high.iloc[i-1]
-        lastPt = i-1
-      else: 
-        newHigh.append(float("nan"))
-        highMax = min(highMax, (high.iloc[i]*1.01 - high.iloc[lastPt]) / (i - lastPt))
-        highMin = max(highMin, (high.iloc[i]*0.99 - high.iloc[lastPt]) / (i - lastPt))
-  newHigh.append(high.iloc[-1])
+def zigzag(arr, func):
+  threshold = 0.005
 
-  newLow = [low.iloc[0]]
-  lowMax = low.iloc[1]*1.01 - low.iloc[0]
-  lowMin = low.iloc[1]*0.99 - low.iloc[0]
+  newArr = [float("nan")] * len(arr)
+  newArr[0] = arr.iloc[0]
+  slopeMax = float("inf")
+  slopeMin = float("-inf")
+  lastAnc = 0
   lastPt = 0
-  for i in range(2, len(low)):
-    if math.isnan(low.iloc[i]):
-      newLow.append(float("nan"))
+  last2Pt = float("nan")
+  for i in range(1, len(arr)):
+    if math.isnan(arr.iloc[i]):
       continue
-      
-    if ((low.iloc[i] - low.iloc[i-1]) < (low.iloc[i-1] - low.iloc[i-2])):
-      newLow.append(float("nan"))
-    else:
-      if ((low.iloc[i]*0.99 - low.iloc[lastPt]) / (i - lastPt)) > lowMax:
-        newLow.append(low.iloc[i-1])
-        lowMax = low.iloc[i]*1.01 - low.iloc[i-1]
-        lowMin = low.iloc[i]*0.99 - low.iloc[i-1]
-        lastPt = i-1
-      elif ((low.iloc[i]*1.01 - low.iloc[lastPt]) / (i - lastPt)) < lowMin:
-        newLow.append(low.iloc[i-1])
-        lowMax = low.iloc[i]*1.01 - low.iloc[i-1]
-        lowMin = low.iloc[i]*0.99 - low.iloc[i-1]
-        lastPt = i-1
+
+    if math.isnan(last2Pt):
+      lastPt = i
+      last2Pt = 0
+      continue
+
+    if (func(arr.iloc[i] - arr.iloc[lastPt], arr.iloc[lastPt] - arr.iloc[last2Pt])):
+      if ((arr.iloc[i]*(1-threshold) - arr.iloc[lastAnc]) / (i - lastAnc)) > slopeMax:
+        newArr[lastPt] = arr.iloc[lastPt]
+        slopeMax = (arr.iloc[i]*(1+threshold) - arr.iloc[lastPt]) / (i - lastPt)
+        slopeMin = (arr.iloc[i]*(1-threshold) - arr.iloc[lastPt]) / (i - lastPt)
+        lastAnc = lastPt
+      elif ((arr.iloc[i]*(1+threshold) - arr.iloc[lastAnc]) / (i - lastAnc)) < slopeMin:
+        newArr[lastPt] = arr.iloc[lastPt]
+        slopeMax = (arr.iloc[i]*(1+threshold) - arr.iloc[lastPt]) / (i - lastPt)
+        slopeMin = (arr.iloc[i]*(1-threshold) - arr.iloc[lastPt]) / (i - lastPt)
+        lastAnc = lastPt
       else:
-        newLow.append(float("nan"))
-        lowMax = min(lowMax, (low.iloc[i]*1.01 - low.iloc[lastPt]) / (i - lastPt))
-        lowMin = max(lowMin, (low.iloc[i]*0.99 - low.iloc[lastPt]) / (i - lastPt))
-  newLow.append(low.iloc[-1])
-
-  return newHigh, newLow
+        slopeMax = min(slopeMax, (arr.iloc[i]*(1+threshold) - arr.iloc[lastAnc]) / (i - lastAnc))
+        slopeMin = max(slopeMin, (arr.iloc[i]*(1-threshold) - arr.iloc[lastAnc]) / (i + lastAnc))
+    last2Pt = lastPt
+    lastPt = i
+  newArr.append(arr.iloc[-1])
+  return newArr
 
 ticker = st.text_input("Ticker", "2600") + ".HK"
 
@@ -191,7 +170,8 @@ gCrosses, dCrosses = gdCross(df)
 df["zz0Hi"] = df["High"]
 df["zz0Lo"] = df["Low"]
 for i in range(1, 6):
-  df[f"zz{i}Hi"], df[f"zz{i}Lo"] = zigzag(df[f"zz{i-1}Hi"], df[f"zz{i-1}Lo"])
+  df[f"zz{i}Hi"]= zigzag(df[f"zz{i-1}Hi"], lambda a, b: a >= b)
+  df[f"zz{i}Lo"] = zigzag(df[f"zz{i-1}Lo"], lambda a, b: a <= b)
 
 # basic plot
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
