@@ -170,8 +170,8 @@ gCrosses, dCrosses = gdCross(df)
 df["zz0Hi"] = df["High"]
 df["zz0Lo"] = df["Low"]
 for i in range(1, 6):
-  df[f"zz{i}Hi"]= zigzag(df[f"zz{i-1}Hi"], lambda a, b: a >= b)
-  df[f"zz{i}Lo"] = zigzag(df[f"zz{i-1}Lo"], lambda a, b: a <= b)
+  df[f"zz{i}Hi"] = zigzag(df[f"zz{i-1}Hi"], lambda a, b: a <= b)
+  df[f"zz{i}Lo"] = zigzag(df[f"zz{i-1}Lo"], lambda a, b: a >= b)
 
 # basic plot
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
