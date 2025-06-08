@@ -105,6 +105,57 @@ def gdCross(df):
 
   return gCrosses, dCrosses
 
+def zigzag(high, low):
+  newHigh = [high.iloc[0]]
+  highMax = high.iloc[1]*1.05 - high.iloc[0]
+  highMin = high.iloc[1]*0.95 - high.iloc[0]
+  lastPt = 0
+  for i in range(2, len(high)):
+    if ((high.iloc[i] - high.iloc[i-1]) > (high.iloc[i-1] - high.iloc[i-2])):
+      newHigh.append(float("nan"))
+    else: 
+      if ((high.iloc[i]*0.95 - high.iloc[lastPt]) / (i - lastPt)) > highMax:
+        newHigh.append(high.iloc[i-1])
+        highMax = high.iloc[i]*1.05 - high.iloc[i-1]
+        highMin = high.iloc[i]*0.95 - high.iloc[i-1]
+        lastPt = i-1
+      elif ((high.iloc[i]*1.05 - high.iloc[lastPt]) / (i - lastPt)) < highMin:
+        newHigh.append(high.iloc[i-1])
+        highMax = high.iloc[i]*1.05 - high.iloc[i-1]
+        highMin = high.iloc[i]*0.95 - high.iloc[i-1]
+        lastPt = i-1
+      else: 
+        newHigh.append(float("nan"))
+        highMax = min(highMax, (high.iloc[i]*1.05 - high.iloc[lastPt]) / (i - lastPt))
+        highMin = max(highMin, (high.iloc[i]*0.95 - high.iloc[lastPt]) / (i - lastPt))
+  newHigh.append(high.iloc[-1])
+
+  newLow = [low.iloc[0]]
+  lowMax = low.iloc[1]*1.05 - low.iloc[0]
+  lowMin = low.iloc[1]*0.95 - low.iloc[0]
+  lastPt = 0
+  for i in range(2, len(low)):
+    if ((low.iloc[i] - low.iloc[i-1]) < (low.iloc[i-1] - low.iloc[i-2])):
+      newLow.append(float("nan"))
+    else:
+      if ((low.iloc[i]*0.95 - low.iloc[lastPt]) / (i - lastPt)) > lowMax:
+        newLow.append(low.iloc[i-1])
+        lowMax = low.iloc[i]*1.05 - low.iloc[i-1]
+        lowMin = low.iloc[i]*0.95 - low.iloc[i-1]
+        lastPt = i-1
+      elif ((low.iloc[i]*1.05 - low.iloc[lastPt]) / (i - lastPt)) < lowMin:
+        newLow.append(low.iloc[i-1])
+        lowMax = low.iloc[i]*1.05 - low.iloc[i-1]
+        lowMin = low.iloc[i]*0.95 - low.iloc[i-1]
+        lastPt = i-1
+      else:
+        newLow.append(float("nan"))
+        lowMax = min(lowMax, (low.iloc[i]*1.05 - low.iloc[lastPt]) / (i - lastPt))
+        lowMin = max(lowMin, (low.iloc[i]*0.95 - low.iloc[lastPt]) / (i - lastPt))
+  newLow.append(low.iloc[-1])
+
+  return newHigh, newLow
+
 ticker = st.text_input("Ticker", "2600") + ".HK"
 
 # market data
@@ -128,13 +179,15 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df)
 
-# basic plot
-st.write(df["Date"].iloc[-5:])
-st.write(df["Date"].tolist()[-5:])
+df["zz0Hi"] = df["High"]
+df["zz0Lo"] = df["Low"]
+for i in range(1, 6):
+  df[f"zz{i}Hi"], df[f"zz{i}Lo"] = zigzag(df[f"zz{i-1}Hi"], df[f"zz{i-1}Lo"])
 
+# basic plot
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
-                    subplot_titles=[f'2600.HK Candlestick'])
+                    subplot_titles=[""])
 
 df = pd.concat([df, futureDf], ignore_index=True)
 fig.add_trace(go.Candlestick(
@@ -176,6 +229,27 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     hoverinfo="none"
   ), row=1, col=1)
 
+for i in range(0, 6):
+  fig.add_trace(go.Scatter(
+    x=df["Date"], 
+    y=df[f"zz{i}Hi"], 
+    mode="lines", 
+    name=f"Zig Zag-{i} High", 
+    line=dict(width=1.5, color="yellow"), 
+    visible=False, 
+    hoverinfo="none"
+  ), row=1, col=1)
+  
+  fig.add_trace(go.Scatter(
+    x=df["Date"], 
+    y=df[f"zz{i}Lo"], 
+    mode="lines", 
+    name=f"Zig Zag-{i} Low", 
+    line=dict(width=1.5, color="yellow"), 
+    visible=False, 
+    hoverinfo="none"
+  ), row=1, col=1)
+
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
@@ -209,7 +283,3 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig)
-#st.title("🎈 My new app")
-#st.write(
-#    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
-#)
