@@ -3,6 +3,7 @@ import math
 import pandas as pd
 import numpy as np
 import sklearn
+from scipy.ndimage import gaussian_filter1d
 import yfinance as yf
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -106,45 +107,19 @@ def gdCross(df):
 
   return gCrosses, dCrosses
 
-def zigzag(arr, func):
-  threshold = 0.005
-
-  newArr = [float("nan")] * (len(arr)-1)
-  newArr[0] = arr.iloc[0]
-  slopeMax = float("inf")
-  slopeMin = float("-inf")
-  lastAnc = 0
-  lastPt = 0
-  last2Pt = float("nan")
-  for i in range(1, len(arr)):
-    if math.isnan(arr.iloc[i]):
-      continue
-
-    if math.isnan(last2Pt):
-      lastPt = i
-      last2Pt = 0
-      continue
-
-    if (func(arr.iloc[i] - arr.iloc[lastPt], arr.iloc[lastPt] - arr.iloc[last2Pt])):
-      if ((arr.iloc[i]*(1-threshold) - arr.iloc[lastAnc]) / (i - lastAnc)) > slopeMax:
-        newArr[lastPt] = arr.iloc[lastPt]
-        slopeMax = (arr.iloc[i]*(1+threshold) - arr.iloc[lastPt]) / (i - lastPt)
-        slopeMin = (arr.iloc[i]*(1-threshold) - arr.iloc[lastPt]) / (i - lastPt)
-        lastAnc = lastPt
-      elif ((arr.iloc[i]*(1+threshold) - arr.iloc[lastAnc]) / (i - lastAnc)) < slopeMin:
-        newArr[lastPt] = arr.iloc[lastPt]
-        slopeMax = (arr.iloc[i]*(1+threshold) - arr.iloc[lastPt]) / (i - lastPt)
-        slopeMin = (arr.iloc[i]*(1-threshold) - arr.iloc[lastPt]) / (i - lastPt)
-        lastAnc = lastPt
-      else:
-        slopeMax = min(slopeMax, (arr.iloc[i]*(1+threshold) - arr.iloc[lastAnc]) / (i - lastAnc))
-        slopeMin = max(slopeMin, (arr.iloc[i]*(1-threshold) - arr.iloc[lastAnc]) / (i + lastAnc))
-    last2Pt = lastPt
-    lastPt = i
-  newArr.append(arr.iloc[lastAnc] + (slopeMax+slopeMin)*(len(arr)-1 - lastAnc)/2)
-  return newArr
-
+def zigzag(arr, n):
+  smoothed = gaussian_filter1d(arr, sigma=3)
+  curvature = np.abs(np.diff(smoothed, n=2, prepend=smoothed[0], append=smoothed[-1]))
+  candid = np.argsort(curvature)
+  break_idx = np.sort(candid[-(n-1):])
+  break_x = arr[break_idx]
+  for i in range(len(arr)):
+    if not i in break_x:
+      arr[i] = float("nan")
+  return arr
+# ----------------------------------------------
 ticker = st.text_input("Ticker", "2600") + ".HK"
+zzN = st.slider("Number of zigzag segments", min_value=10, max_value=100, value=50)
 
 # market data
 marketDf = yf.download("^HSI", period="2y")
@@ -167,11 +142,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df)
 
-df["zz0Hi"] = df["High"]
-df["zz0Lo"] = df["Low"]
-for i in range(1, 6):
-  df[f"zz{i}Hi"] = zigzag(df[f"zz{i-1}Hi"], lambda a, b: a <= b)
-  df[f"zz{i}Lo"] = zigzag(df[f"zz{i-1}Lo"], lambda a, b: a >= b)
+df["zzHi"] = zigzag(df["High"], zzN)
 
 # basic plot
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
@@ -218,28 +189,16 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     hoverinfo="none"
   ), row=1, col=1)
 
-for i in range(0, 6):
-  fig.add_trace(go.Scatter(
-    x=df["Date"], 
-    y=df[f"zz{i}Hi"], 
-    mode="lines", 
-    name=f"Zig Zag-{i} High", 
-    line=dict(width=1.5, color="yellow"), 
-    hoverinfo="none", 
-    connectgaps=True, 
-    visible="legendonly"
-  ), row=1, col=1)
-  
-  fig.add_trace(go.Scatter(
-    x=df["Date"], 
-    y=df[f"zz{i}Lo"], 
-    mode="lines", 
-    name=f"Zig Zag-{i} Low", 
-    line=dict(width=1.5, color="yellow"), 
-    hoverinfo="none", 
-    connectgaps=True, 
-    visible="legendonly"
-  ), row=1, col=1)
+fig.add_trace(go.Scatter(
+  x=df["Date"], 
+  y=df[f"zzHi"], 
+  mode="lines", 
+  name=f"Zig Zag High", 
+  line=dict(width=1.5, color="yellow"), 
+  hoverinfo="none", 
+  connectgaps=True, 
+  visible="legendonly"
+), row=1, col=1)
 
 # Add layout
 fig.update_layout(
@@ -273,4 +232,4 @@ fig.update_layout(
   )
 )
 
-st.plotly_chart(fig)
+st.plotly_chart(fig, use_container_width=True)
