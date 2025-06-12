@@ -146,7 +146,7 @@ st.write(gCrosses, dCrosses)
 df["zzHi"] = zigzag(df["High"])
 
 # clean data
-df.reset_index()
+df = df.reset_index()
 df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 
 # basic plot
