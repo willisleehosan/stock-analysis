@@ -12,8 +12,8 @@ from plotly.subplots import make_subplots
 import datetime
 
 def fetchData(ticker):
-  df = yf.download(ticker, period="2y")
-  dfs = yf.download(ticker, period="6mo", interval="1h")
+  df = yf.download(ticker, period="2y", ignore_tz=True)
+  dfs = yf.download(ticker, period="6mo", interval="1h", ignore_tz=True)
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
   return df, dfs
@@ -130,7 +130,7 @@ def zigzag(df, dfs):
 ticker = st.text_input("Ticker", "2600") + ".HK"
 
 # market data
-marketDf = yf.download("^HSI", period="2y")
+marketDf = yf.download("^HSI", period="2y", ignore_tz=True)
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
 
 # future dates
