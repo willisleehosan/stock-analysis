@@ -114,7 +114,7 @@ def zigzag(arr):
   peaksX = []
   peaksY = []
   for i in range(1, len(arr)-1):
-    if (smoothed[i] > smoothed[i-1]) && (smoothed[i+1] < smoothed[i]):
+    if (smoothed[i] > smoothed[i-1]) and (smoothed[i+1] < smoothed[i]):
       peaksX.append(i)
       peaksY.append(arr[i])
 
