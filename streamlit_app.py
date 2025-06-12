@@ -121,7 +121,7 @@ def zigzag(df, dfs):
   res = zzPwlf.fitfast(15)
 
   xHat = []
-  for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.iloc[0])-1):]:
+  for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.to_pydatetime()[0])-1):]:
     xHat.append(bisect.bisect_left(dfs.index.to_pydatetime(), d))
     
   yHat = zzPwlf.predict(np.array(xHat))
