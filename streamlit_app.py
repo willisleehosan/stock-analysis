@@ -122,7 +122,7 @@ def zigzag(arr):
   st.write(peaksY)
   
   zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
-  res = zzPwlf.fit(15)
+  res = zzPwlf.fitfast(15)
   xHat = np.arange(0, len(arr))
   yHat = zzPwlf.predict(xHat)
   return yHat
