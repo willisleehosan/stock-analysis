@@ -17,7 +17,7 @@ def fetchData(ticker):
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
   df.index.tz_localize("Asia/Hong_Kong")
-  df.index.tz_convert("Asia/Hong_Kong")
+  dfs.index.tz_convert("Asia/Hong_Kong")
   return df, dfs
 
 def heikinashi(df):
