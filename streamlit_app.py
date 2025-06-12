@@ -1,5 +1,6 @@
 import streamlit as st
 import math
+import bisect
 import pandas as pd
 import numpy as np
 import sklearn
@@ -12,7 +13,7 @@ import datetime
 
 def fetchData(ticker):
   df = yf.download(ticker, period="2y")
-  dfs = yf.download(ticker, period="3mo", interval="1h")
+  dfs = yf.download(ticker, period="6mo", interval="1h")
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
   return df, dfs
@@ -106,20 +107,24 @@ def gdCross(df, futureDf):
 
   return gCrosses, dCrosses
 
-def zigzag(arr):
-  smoothed = gaussian_filter1d(arr, sigma=1)
+def zigzag(df, dfs):
+  smoothed = gaussian_filter1d(dfs["High"], sigma=3)
   
   peaksX = []
   peaksY = []
-  for i in range(1, len(arr)-1):
+  for i in range(1, len(smoothed)-1):
     if (smoothed[i] > smoothed[i-1]) and (smoothed[i+1] < smoothed[i]):
       peaksX.append(i)
-      peaksY.append(arr[i])
+      peaksY.append(dfs["High"].iloc[i])
   
   zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
   res = zzPwlf.fitfast(15)
-  xHat = np.arange(0, len(arr))
-  yHat = zzPwlf.predict(xHat)
+
+  xHat = []
+  for d in df.index.iloc[(bisect.bisect_right(df.index.array, dfs.index.iloc[0])-1):]:
+    xHat.append(bisect.bisect_left(dfs.index.array, d))
+    
+  yHat = zzPwlf.predict(np.array(xHat))
   return yHat
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "2600") + ".HK"
@@ -141,9 +146,10 @@ df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df, futureDf)
-st.write(gCrosses, dCrosses)
 
-df["zzHi"] = zigzag(df["High"])
+df["zzHi"] = [float("nan")] * (len(df))
+zzHi = zigzag(df, dfs)
+df["zzHi"].iloc[-len(zzHi):] = zzHi
 
 # clean data
 df = df.reset_index()
