@@ -110,7 +110,7 @@ def gdCross(df, futureDf):
   return gCrosses, dCrosses
 
 def zigzag(df, dfs):
-  smoothed = gaussian_filter1d(dfs["High"], sigma=3)
+  smoothed = gaussian_filter1d(dfs["High"], sigma=2)
   
   peaksX = []
   peaksY = []
@@ -121,7 +121,7 @@ def zigzag(df, dfs):
   st.write(peaksX)
   
   zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
-  res = zzPwlf.fit(8)
+  res = zzPwlf.fitfast(8)
 
   xHat = []
   for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.to_pydatetime()[0])-1):]:
