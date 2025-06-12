@@ -121,7 +121,7 @@ def zigzag(df, dfs):
   st.write(peaksX)
   
   zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
-  res = zzPwlf.fitfast(15)
+  res = zzPwlf.fit(8)
 
   xHat = []
   for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.to_pydatetime()[0])-1):]:
