@@ -109,7 +109,7 @@ def gdCross(df):
   return gCrosses, dCrosses
 
 def zigzag(arr):
-  smoothed = gaussian_filter1d(arr, sigma=6)
+  smoothed = gaussian_filter1d(arr, sigma=3)
   
   peaksX = []
   peaksY = []
