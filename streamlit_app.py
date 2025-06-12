@@ -147,7 +147,7 @@ df["zzHi"] = zigzag(df["High"])
 
 # clean data
 df.reset_index()
-df["Date"] = df["Date"].strftime("%Y-%m-%d")
+df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 
 # basic plot
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
