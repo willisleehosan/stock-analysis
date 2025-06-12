@@ -16,7 +16,7 @@ def fetchData(ticker):
   dfs = yf.download(ticker, period="6mo", interval="1h", ignore_tz=True)
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
-  df.index.tz_convert("Asia/Hong_Kong")
+  df.index.tz_localize("Asia/Hong_Kong")
   dfs.index.tz_localize("Asia/Hong_Kong")
   return df, dfs
 
