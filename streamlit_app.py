@@ -16,7 +16,7 @@ def fetchData(ticker):
   dfs = yf.download(ticker, period="6mo", interval="1h", ignore_tz=True)
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
-  df.index.tz_convert("Asia/Hong_Kong")
+  df.index.tz_localize("Asia/Hong_Kong")
   df.index.tz_convert("Asia/Hong_Kong")
   return df, dfs
 
@@ -134,6 +134,7 @@ ticker = st.text_input("Ticker", "2600") + ".HK"
 # market data
 marketDf = yf.download("^HSI", period="2y", ignore_tz=True)
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
+marketDf.index.tz_localize("Asia/Hong_Kong")
 
 # future dates
 futureDates = [marketDf.index[-1] + pd.tseries.offsets.BDay(n=i) for i in range(1, 11)]
