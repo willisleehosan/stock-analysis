@@ -12,10 +12,10 @@ import datetime
 
 def fetchData(ticker):
   df = yf.download(ticker, period="2y")
+  dfs = yf.download(ticker, period="3mo", interval="1h")
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
-  df = df.reset_index()
-  df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
-  return df
+  dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
+  return df, dfs
 
 def heikinashi(df):
   ha = df.copy()
@@ -27,12 +27,11 @@ def heikinashi(df):
   ha['HA_Low'] = ha[['HA_Open', 'HA_Close', 'Low']].min(axis=1)
   return ha
 
-def alphabeta(df):
+def alphabeta(df, marketDf):
   abDf = pd.DataFrame({
-    "Date": df["Date"],
     "stock_close": df["Close"],
     "market_close": marketDf["Close"]
-  }).dropna()
+  }, index=(df.index)).dropna()
   abDf["stock_ret"] = abDf["stock_close"].pct_change()
   abDf["market_ret"] = abDf["market_close"].pct_change()
   abDf = abDf.dropna()
@@ -80,13 +79,12 @@ def srSMA(df):
 
   return support_best, resistance_best
 
-def gdCross(df):
+def gdCross(df, futureDf):
   smaEx = pd.DataFrame({
-      "Date": df["Date"],
       "20SMA": df["20SMA"],
       "50SMA": df["50SMA"],
       "100SMA": df["100SMA"]
-  })
+  }, index=df.index)
   smaEx = pd.concat([smaEx, futureDf], ignore_index=True)
   for sma_col in ["20SMA", "50SMA", "100SMA"]:
     recent = df[[sma_col]].dropna().tail(10)
@@ -102,9 +100,9 @@ def gdCross(df):
   for i in range(1, len(smaEx)):
     for (shortSMA, longSMA) in [("20SMA", "50SMA"), ("20SMA", "100SMA"), ("50SMA", "100SMA")]:
       if (smaEx[shortSMA].iloc[i-1] <= smaEx[longSMA].iloc[i-1]) and (smaEx[shortSMA].iloc[i] > smaEx[longSMA].iloc[i]):
-        gCrosses.append(smaEx["Date"].iloc[i])
+        gCrosses.append(smaEx.index[i])
       elif (smaEx[shortSMA].iloc[i-1] >= smaEx[longSMA].iloc[i-1]) and (smaEx[shortSMA].iloc[i] < smaEx[longSMA].iloc[i]):
-        dCrosses.append(smaEx["Date"].iloc[i])
+        dCrosses.append(smaEx.index[i])
 
   return gCrosses, dCrosses
 
@@ -117,9 +115,6 @@ def zigzag(arr):
     if (smoothed[i] > smoothed[i-1]) and (smoothed[i+1] < smoothed[i]):
       peaksX.append(i)
       peaksY.append(arr[i])
-
-  st.write(peaksX)
-  st.write(peaksY)
   
   zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
   res = zzPwlf.fitfast(15)
@@ -132,25 +127,27 @@ ticker = st.text_input("Ticker", "2600") + ".HK"
 # market data
 marketDf = yf.download("^HSI", period="2y")
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
-marketDf = marketDf.reset_index()
-marketDf["Date"] = marketDf["Date"].dt.strftime("%Y-%m-%d")
 
 # future dates
-futureDates = [pd.to_datetime(marketDf["Date"].iloc[-1]) + pd.tseries.offsets.BDay(n=i) for i in range(1, 11)]
-futureDatesStr = [d.strftime("%Y-%m-%d") for d in futureDates]
-futureDf = pd.DataFrame({"Date": futureDatesStr})
+futureDates = [marketDf.index[-1] + pd.tseries.offsets.BDay(n=i) for i in range(1, 11)]
+futureDf = pd.DataFrame(index=(futureDates))
 
-df = fetchData(ticker)
+df, dfs = fetchData(ticker)
 df = heikinashi(df)
-alpha, beta = alphabeta(df)
+alpha, beta = alphabeta(df, marketDf)
 df["10SMA"] = df["Close"].rolling(window=10).mean()
 df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df)
+st.write(gCrosses, dCrosses)
 
 df["zzHi"] = zigzag(df["High"])
+
+# clean data
+df.reset_index()
+df["Date"] = df["Date"].strftime("%Y-%m-%d")
 
 # basic plot
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
