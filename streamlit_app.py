@@ -134,7 +134,7 @@ ticker = st.text_input("Ticker", "2600") + ".HK"
 # market data
 marketDf = yf.download("^HSI", period="2y", ignore_tz=True)
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
-marketDf.index.tz_convert("Asia/Hong_Kong")
+marketDf.index.tz_localize("Asia/Hong_Kong")
 
 # future dates
 futureDates = [marketDf.index[-1] + pd.tseries.offsets.BDay(n=i) for i in range(1, 11)]
