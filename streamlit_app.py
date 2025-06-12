@@ -140,7 +140,7 @@ df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
-gCrosses, dCrosses = gdCross(df)
+gCrosses, dCrosses = gdCross(df, futureDf)
 st.write(gCrosses, dCrosses)
 
 df["zzHi"] = zigzag(df["High"])
