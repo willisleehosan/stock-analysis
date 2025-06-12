@@ -85,7 +85,7 @@ def gdCross(df, futureDf):
       "50SMA": df["50SMA"],
       "100SMA": df["100SMA"]
   }, index=df.index)
-  smaEx = pd.concat([smaEx, futureDf], ignore_index=True)
+  smaEx = pd.concat([smaEx, futureDf])
   for sma_col in ["20SMA", "50SMA", "100SMA"]:
     recent = df[[sma_col]].dropna().tail(10)
     model = sklearn.linear_model.LinearRegression()
