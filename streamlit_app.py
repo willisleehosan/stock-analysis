@@ -118,14 +118,14 @@ def zigzag(df, dfs):
     if (smoothed[i] > smoothed[i-1]) and (smoothed[i+1] < smoothed[i]):
       peaksX.append(i)
       peaksY.append(dfs["High"].iloc[i])
+  st.write(peaksX)
   
   zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
-  res = zzPwlf.fit(15)
+  res = zzPwlf.fitfast(15)
 
   xHat = []
   for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.to_pydatetime()[0])-1):]:
     xHat.append(bisect.bisect_left(dfs.index.to_pydatetime(), d))
-  st.write(xHat)
     
   yHat = zzPwlf.predict(np.array(xHat))
   return yHat
