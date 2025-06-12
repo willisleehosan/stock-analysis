@@ -3,6 +3,7 @@ pandas
 numpy
 scikit-learn
 scipy
+pwlf
 yfinance
 plotly
 datetime
