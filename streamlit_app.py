@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import sklearn
 from scipy.ndimage import gaussian_filter1d
+import pwlf
 import yfinance as yf
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -107,19 +108,23 @@ def gdCross(df):
 
   return gCrosses, dCrosses
 
-def zigzag(arr, n):
+def zigzag(arr):
   smoothed = gaussian_filter1d(arr, sigma=3)
-  curvature = np.abs(np.diff(smoothed, n=2, prepend=smoothed[0], append=smoothed[-1]))
-  candid = np.argsort(curvature)
-  break_idx = np.sort(candid[-(n-1):])
-  break_x = arr[break_idx]
-  for i in range(len(arr)):
-    if not i in break_x:
-      arr[i] = float("nan")
-  return arr
+  
+  peaksX = np.array([])
+  peaksY = np.array([])
+  for i in range(1, len(arr)-1):
+    if (smoothed[i] - smoothed[i-1]) > (smoothed[i+1] - smoothed[i]):
+      np.append(peaksX, i)
+      np.append(peaksY, arr[i])
+
+  zzPwlf = pwlf.PiecewiseLinFit(peaksX, peaksY)
+  res = zzPwlf.fit(15)
+  xHat = np.arange(0, len(arr))
+  yHat = zzPwlf.predict(xHat)
+  return yHat
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "2600") + ".HK"
-zzN = st.slider("Number of zigzag segments", min_value=10, max_value=100, value=50)
 
 # market data
 marketDf = yf.download("^HSI", period="2y")
@@ -142,7 +147,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df)
 
-df["zzHi"] = zigzag(df["High"], zzN)
+df["zzHi"] = zigzag(df["High"])
 
 # basic plot
 fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
