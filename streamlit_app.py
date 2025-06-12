@@ -111,18 +111,17 @@ def gdCross(df):
 def zigzag(arr):
   smoothed = gaussian_filter1d(arr, sigma=3)
   
-  peaksX = np.array([])
-  peaksY = np.array([])
-  st.write(smoothed[0])
+  peaksX = []
+  peaksY = []
   for i in range(1, len(arr)-1):
     if (smoothed[i] - smoothed[i-1]) > (smoothed[i+1] - smoothed[i]):
-      np.append(peaksX, i)
-      np.append(peaksY, arr[i])
+      peaksX.append(i)
+      peaksY.append(arr[i])
 
   st.write(peaksX)
   st.write(peaksY)
   
-  zzPwlf = pwlf.PiecewiseLinFit(peaksX, peaksY)
+  zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
   res = zzPwlf.fit(15)
   xHat = np.arange(0, len(arr))
   yHat = zzPwlf.predict(xHat)
