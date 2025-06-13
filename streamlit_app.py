@@ -160,6 +160,7 @@ support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df, futureDf)
 
 df["zzHi"] = [float("nan")] * (len(df))
+df["zzLo"] = [float("nan")] * (len(df))
 zzHi, zzLo = zigzag(df, dfs)
 df["zzHi"].iloc[-len(zzHi):] = zzHi
 df["zzLo"].iloc[-len(zzLo):] - zzLo
