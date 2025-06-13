@@ -163,7 +163,7 @@ df["zzHi"] = [float("nan")] * (len(df))
 df["zzLo"] = [float("nan")] * (len(df))
 zzHi, zzLo = zigzag(df, dfs)
 df["zzHi"].iloc[-len(zzHi):] = zzHi
-df["zzLo"].iloc[-len(zzLo):] - zzLo
+df["zzLo"].iloc[-len(zzLo):] = zzLo
 
 # clean data
 df = df.reset_index()
