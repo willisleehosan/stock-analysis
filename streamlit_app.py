@@ -110,25 +110,33 @@ def gdCross(df, futureDf):
   return gCrosses, dCrosses
 
 def zigzag(df, dfs):
-  smoothed = gaussian_filter1d(dfs["High"], sigma=1)
+  smoothedHi = gaussian_filter1d(dfs["High"], sigma=1)
+  smoothedLo = gaussian_filter1d(dfs["Low"], sigma=1)
   
-  peaksX = []
-  peaksY = []
-  for i in range(1, len(smoothed)-1):
-    if (smoothed[i] > smoothed[i-1]) and (smoothed[i+1] < smoothed[i]):
-      peaksX.append(i)
-      peaksY.append(dfs["High"].iloc[i])
-  st.write(peaksX)
+  peaksXHi = []
+  peaksYHi = []
+  peaksXLo = []
+  peaksYLo = []
+  for i in range(1, len(smoothedHi)-1):
+    if (smoothedHi[i] >= smoothedHi[i-1]) and (smoothedHi[i+1] < smoothedHi[i]):
+      peaksXHi.append(i)
+      peaksYHi.append(dfs["High"].iloc[i])
+    elif (smoothedLo[i] <= smoothedLo[i-1]) and (smoothedLo[i+1] > smoothedLo[i]):
+      peaksXLo.append(i)
+      peaksYLo.append(dfs["Low"].iloc[i])
   
-  zzPwlf = pwlf.PiecewiseLinFit(np.array(peaksX), np.array(peaksY))
-  res = zzPwlf.fitfast(8)
+  zzPwlfHi = pwlf.PiecewiseLinFit(np.array(peaksXHi), np.array(peaksYHi))
+  zzPwlfLo = pwlf.PiecewiseLinFit(np.array(peaksXLo), np.array(peaksYLo))
+  resHi = zzPwlfHi.fitfast(8)
+  resLo = zzPwlfLo.fitfast(8)
 
   xHat = []
   for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.to_pydatetime()[0])-1):]:
     xHat.append(bisect.bisect_left(dfs.index.to_pydatetime(), d))
     
-  yHat = zzPwlf.predict(np.array(xHat))
-  return yHat
+  yHatHi = zzPwlfHi.predict(np.array(xHat))
+  yHatLo = zzPwlfLo.predict(np.array(xHat))
+  return yHatHi, yHatLo
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "2600") + ".HK"
 
@@ -152,8 +160,9 @@ support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df, futureDf)
 
 df["zzHi"] = [float("nan")] * (len(df))
-zzHi = zigzag(df, dfs)
+zzHi, zzLo = zigzag(df, dfs)
 df["zzHi"].iloc[-len(zzHi):] = zzHi
+df["zzLo"].iloc[-len(zzLo):] - zzLo
 
 # clean data
 df = df.reset_index()
@@ -209,6 +218,17 @@ fig.add_trace(go.Scatter(
   y=df[f"zzHi"], 
   mode="lines", 
   name=f"Zig Zag High", 
+  line=dict(width=1.5, color="yellow"), 
+  hoverinfo="none", 
+  connectgaps=True, 
+  visible="legendonly"
+), row=1, col=1)
+
+fig.add_trace(go.Scatter(
+  x=df["Date"], 
+  y=df[f"zzLo"], 
+  mode="lines", 
+  name=f"Zig Zag Low", 
   line=dict(width=1.5, color="yellow"), 
   hoverinfo="none", 
   connectgaps=True, 
