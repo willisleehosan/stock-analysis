@@ -164,7 +164,7 @@ df["zzLo"] = [float("nan")] * (len(df))
 zzHi, zzLo = zigzag(df, dfs)
 df["zzHi"].iloc[-len(zzHi):] = zzHi
 df["zzLo"].iloc[-len(zzLo):] = zzLo
-df["zzDiff"] = df["zzHi"] - df["zzLo"]
+df["zzDiff"].iloc = df["zzHi"] - df["zzLo"]
 
 # clean data
 df = df.reset_index()
@@ -270,7 +270,7 @@ fig.update_layout(
     spikemode='across',
     spikethickness=2
   ),
-  yaxis1=dict(
+  yaxis=dict(
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
