@@ -269,6 +269,11 @@ fig.update_layout(
     spikemode='across',
     spikethickness=2
   ),
+  xaxis2=dict(
+    type="category", 
+    categoryorder="array", 
+    categoryarray=df["Date"].tolist()
+  ), 
   yaxis=dict(
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
