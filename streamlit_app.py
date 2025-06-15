@@ -257,7 +257,7 @@ fig.update_layout(
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
   spikedistance=-1,
-  xaxis1=dict(
+  xaxis=dict(
     type='category',
     categoryorder='array',
     categoryarray=df["Date"].tolist(),
@@ -271,14 +271,6 @@ fig.update_layout(
     spikethickness=2
   ),
   yaxis1=dict(
-    showspikes=True,
-    spikecolor='rgba(255,255,255,0.3)',
-    spikedash='solid',
-    spikesnap='cursor',
-    spikemode='across',
-    spikethickness=2
-  ), 
-  yaxis2=dict(
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
