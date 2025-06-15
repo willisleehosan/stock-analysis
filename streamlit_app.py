@@ -138,7 +138,7 @@ def zigzag(df, dfs):
   yHatLo = zzPwlfLo.predict(np.array(xHat))
   return yHatHi, yHatLo
 # ----------------------------------------------
-ticker = st.text_input("Ticker", "2600") + ".HK"
+ticker = st.text_input("Ticker", "0992") + ".HK"
 
 # market data
 marketDf = yf.download("^HSI", period="2y", ignore_tz=True)
@@ -250,7 +250,6 @@ fig.add_trace(go.Scatter(
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
-  xaxis_title="Date",
   yaxis1_title="Price",
   yaxis2_title="Price Diff.", 
   height=600,
@@ -279,5 +278,6 @@ fig.update_layout(
     spikethickness=2
   )
 )
+fig.update_xaxes(title_text="Date", row=2, col=1)
 
 st.plotly_chart(fig, use_container_width=True)
