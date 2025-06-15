@@ -123,11 +123,11 @@ def zigzag(df, dfs):
     if (smoothedHi[i] >= smoothedHi[i-1]) and (smoothedHi[i+1] < smoothedHi[i]):
       peaksXHi.append(i)
       peaksYHi.append(dfs["High"].iloc[i])
-      dateHi.append(dfs.index.iloc[i])
+      dateHi.append(dfs.to_pydatetime()[i])
     elif (smoothedLo[i] <= smoothedLo[i-1]) and (smoothedLo[i+1] > smoothedLo[i]):
       peaksXLo.append(i)
       peaksYLo.append(dfs["Low"].iloc[i])
-      dateLo.append(dfs.index.iloc[i])
+      dateLo.append(dfs.to_pydatetime()[i])
 
   st.write(dateHi)
   st.write(dateLo)
