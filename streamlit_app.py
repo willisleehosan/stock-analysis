@@ -164,15 +164,16 @@ df["zzLo"] = [float("nan")] * (len(df))
 zzHi, zzLo = zigzag(df, dfs)
 df["zzHi"].iloc[-len(zzHi):] = zzHi
 df["zzLo"].iloc[-len(zzLo):] = zzLo
+df["zzDiff"] = zzHi - zzLo
 
 # clean data
 df = df.reset_index()
 df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 
 # basic plot
-fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
+fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
-                    subplot_titles=[""])
+                    subplot_titles=["", ""])
 
 df = pd.concat([df, futureDf], ignore_index=True)
 fig.add_trace(go.Candlestick(
@@ -218,7 +219,7 @@ fig.add_trace(go.Scatter(
   x=df["Date"], 
   y=df[f"zzHi"], 
   mode="lines", 
-  name=f"Zig Zag High", 
+  name="Zig Zag High", 
   line=dict(width=1.5, color="yellow"), 
   hoverinfo="none", 
   connectgaps=True, 
@@ -229,18 +230,29 @@ fig.add_trace(go.Scatter(
   x=df["Date"], 
   y=df[f"zzLo"], 
   mode="lines", 
-  name=f"Zig Zag Low", 
+  name="Zig Zag Low", 
   line=dict(width=1.5, color="yellow"), 
   hoverinfo="none", 
   connectgaps=True, 
   visible="legendonly"
 ), row=1, col=1)
 
+fig.add_trace(go.Scatter(
+  x=df["Date"], 
+  y=df["zzDiff"], 
+  mode="lines", 
+  name="Zig Zag Diff", 
+  line=dict(width=1.5, color="white"), 
+  hoverinfo="none", 
+  connectgaps=True
+), row=2, col=1)
+
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   xaxis_title="Date",
-  yaxis_title="Price",
+  yaxis1_title="Price",
+  yaxis2_title="Diff. Price", 
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
@@ -264,7 +276,15 @@ fig.update_layout(
     spikedash='solid',
     spikesnap='cursor',
     spikemode='across',
-    spikethickness=2,
+    spikethickness=2
+  ), 
+  yaxis2=dict(
+    showspikes=True, 
+    spikecolor="rgba(255,255,255,0.3)",
+    spikedash='solid', 
+    spikesnap='cursor', 
+    spikemode='across', 
+    spikethickness=2
   )
 )
 
