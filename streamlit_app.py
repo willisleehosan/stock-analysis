@@ -277,14 +277,6 @@ fig.update_layout(
     spikesnap='cursor',
     spikemode='across',
     spikethickness=2
-  ), 
-  yaxis2=dict(
-    showspikes=True, 
-    spikecolor="rgba(255,255,255,0.3)",
-    spikedash='solid', 
-    spikesnap='cursor', 
-    spikemode='across', 
-    spikethickness=2
   )
 )
 
