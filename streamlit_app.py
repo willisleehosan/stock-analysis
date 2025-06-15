@@ -168,7 +168,7 @@ df["zzDiff"] = df["zzHi"] - df["zzLo"]
 
 # clean data
 df = df.reset_index()
-df["Date"].iloc = df["Date"].dt.strftime("%Y-%m-%d")
+df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 
 # basic plot
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
