@@ -250,9 +250,9 @@ fig.add_trace(go.Scatter(
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
-  xaxis_title="Date",
+  xaxis2_title="Date",
   yaxis1_title="Price",
-  yaxis2_title="Diff. Price", 
+  yaxis2_title="Price Diff.", 
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
@@ -271,6 +271,14 @@ fig.update_layout(
     spikethickness=2
   ),
   yaxis1=dict(
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  ), 
+  yaxis2=dict(
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
