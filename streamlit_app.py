@@ -278,6 +278,5 @@ fig.update_layout(
     spikethickness=2
   )
 )
-fig.update_xaxes(title_text="Date", row=2, col=1)
 
 st.plotly_chart(fig, use_container_width=True)
