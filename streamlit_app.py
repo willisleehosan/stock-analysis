@@ -250,7 +250,7 @@ fig.add_trace(go.Scatter(
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
-  xaxis2_title="Date",
+  xaxis_title="Date",
   yaxis1_title="Price",
   yaxis2_title="Price Diff.", 
   height=600,
