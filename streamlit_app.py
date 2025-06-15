@@ -117,13 +117,20 @@ def zigzag(df, dfs):
   peaksYHi = []
   peaksXLo = []
   peaksYLo = []
+  dateHi = []
+  dateLo = []
   for i in range(1, len(smoothedHi)-1):
     if (smoothedHi[i] >= smoothedHi[i-1]) and (smoothedHi[i+1] < smoothedHi[i]):
       peaksXHi.append(i)
       peaksYHi.append(dfs["High"].iloc[i])
+      dateHi.append(dfs.index.iloc[i])
     elif (smoothedLo[i] <= smoothedLo[i-1]) and (smoothedLo[i+1] > smoothedLo[i]):
       peaksXLo.append(i)
       peaksYLo.append(dfs["Low"].iloc[i])
+      dateLo.append(dfs.index.iloc[i])
+
+  st.write(dateHi)
+  st.write(dateLo)
   
   zzPwlfHi = pwlf.PiecewiseLinFit(np.array(peaksXHi), np.array(peaksYHi))
   zzPwlfLo = pwlf.PiecewiseLinFit(np.array(peaksXLo), np.array(peaksYLo))
