@@ -168,7 +168,7 @@ df = df.reset_index()
 df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 
 # basic plot
-fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
+fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
                     subplot_titles=["", ""])
 
