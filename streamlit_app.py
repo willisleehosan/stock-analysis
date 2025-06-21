@@ -132,8 +132,8 @@ def rsi(arr, l):
   uSmma = u[:2]
   dSmma = d[:2]
   for i in range(2, len(arr)):
-    uSmma.append(uSmma[i-1]*(l-1) + u[i]) / l
-    dSmma.append(dSmma[i-1]*(l-1) + d[i]) / l
+    uSmma.append((uSmma[i-1]*(l-1) + u[i]) / l)
+    dSmma.append((dSmma[i-1]*(l-1) + d[i]) / l)
   uSmma[:(3*l)] = [float("nan")] * (3*l)
   dSmma[:(3*l)] = [float("nan")] * (3*l)
   rsi = 100 * uSmma / (uSmma + dSmma)
