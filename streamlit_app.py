@@ -122,6 +122,22 @@ def zigzag(df, dfs):
   yHatHi = zzPwlfHi.predict(np.array(xHat))
   yHatLo = zzPwlfLo.predict(np.array(xHat))
   return yHatHi, yHatLo
+
+def rsi(arr, l):
+  u = [float("nan")]
+  d = [float("nan")]
+  for i in range(1, len(arr)):
+    u.append(max(0, arr[i] - arr[i-1]))
+    d.append(max(0, arr[i-1] - arr[i]))
+  uSmma = u[:2]
+  dSmma = d[:2]
+  for i in range(2, len(arr)):
+    uSmma.append(uSmma[i-1]*(l-1) + u[i]) / l
+    dSmma.append(dSmma[i-1]*(l-1) + d[i]) / l
+  uSmma[:(3*l)] = [float("nan")] * (3*l)
+  dSmma[:(3*l)] = [float("nan")] * (3*l)
+  rsi = 100 * uSmma / (uSmma + dSmma)
+  return rsi
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "0992") + ".HK"
 
@@ -143,20 +159,14 @@ df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df, futureDf)
-
-df["zzHi"] = [float("nan")] * (len(df))
-df["zzLo"] = [float("nan")] * (len(df))
-zzHi, zzLo = zigzag(df, dfs)
-df["zzHi"].iloc[-len(zzHi):] = zzHi
-df["zzLo"].iloc[-len(zzLo):] = zzLo
-df["zzDiff"] = df["zzHi"] - df["zzLo"]
+df["rsi"] = rsi(df["Close"], 14)
 
 # clean data
 df = df.reset_index()
 df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 
 # basic plot
-fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
+fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
                     subplot_titles=["", ""])
 
@@ -202,41 +212,18 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
 
 fig.add_trace(go.Scatter(
   x=df["Date"], 
-  y=df[f"zzHi"], 
+  y=df["rsi"], 
   mode="lines", 
-  name="Zig Zag High", 
-  line=dict(width=1.5, color="yellow"), 
-  hoverinfo="none", 
-  connectgaps=True, 
-  visible="legendonly"
-), row=1, col=1)
-
-fig.add_trace(go.Scatter(
-  x=df["Date"], 
-  y=df[f"zzLo"], 
-  mode="lines", 
-  name="Zig Zag Low", 
-  line=dict(width=1.5, color="yellow"), 
-  hoverinfo="none", 
-  connectgaps=True, 
-  visible="legendonly"
-), row=1, col=1)
-
-fig.add_trace(go.Scatter(
-  x=df["Date"], 
-  y=df["zzDiff"], 
-  mode="lines", 
-  name="Zig Zag Diff", 
-  line=dict(width=1.5, color="white"), 
-  hoverinfo="none", 
-  connectgaps=True
+  name="14-D RSI", 
+  line=dict(width=1.5, color="white") ,
+  hoverinfo="none"
 ), row=2, col=1)
 
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   yaxis1_title="Price",
-  yaxis2_title="Price Diff.", 
+  yaxis2_title="RSI", 
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
