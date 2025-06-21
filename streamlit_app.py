@@ -136,7 +136,9 @@ def rsi(arr, l):
     dSmma.append((dSmma[i-1]*(l-1) + d[i]) / l)
   uSmma[:(3*l)] = [float("nan")] * (3*l)
   dSmma[:(3*l)] = [float("nan")] * (3*l)
-  rsi = 100 * uSmma / (uSmma + dSmma)
+  rsi = []
+  for i in range(0, len(arr)):
+    rsi.append(100 * uSmma[i] / (uSmma[i] + dSmma[i]))
   return rsi
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "0992") + ".HK"
