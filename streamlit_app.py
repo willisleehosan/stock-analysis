@@ -109,33 +109,11 @@ def gdCross(df, futureDf):
 
   return gCrosses, dCrosses
 
-def zigzag(df, dfs):
-  smoothedHi = gaussian_filter1d(dfs["High"], sigma=1)
-  smoothedLo = gaussian_filter1d(dfs["Low"], sigma=1)
-  
-  peaksXHi = []
-  peaksYHi = []
-  peaksXLo = []
-  peaksYLo = []
-  dateHi = []
-  dateLo = []
-  for i in range(1, len(smoothedHi)-1):
-    if (smoothedHi[i] >= smoothedHi[i-1]) and (smoothedHi[i+1] < smoothedHi[i]):
-      peaksXHi.append(i)
-      peaksYHi.append(dfs["High"].iloc[i])
-      dateHi.append(dfs.index.to_pydatetime()[i])
-    elif (smoothedLo[i] <= smoothedLo[i-1]) and (smoothedLo[i+1] > smoothedLo[i]):
-      peaksXLo.append(i)
-      peaksYLo.append(dfs["Low"].iloc[i])
-      dateLo.append(dfs.index.to_pydatetime()[i])
-
-  st.write(dateHi)
-  st.write(dateLo)
-  
-  zzPwlfHi = pwlf.PiecewiseLinFit(np.array(peaksXHi), np.array(peaksYHi))
-  zzPwlfLo = pwlf.PiecewiseLinFit(np.array(peaksXLo), np.array(peaksYLo))
-  resHi = zzPwlfHi.fit(8)
-  resLo = zzPwlfLo.fit(8)
+def zigzag(df, dfs):  
+  zzPwlfHi = pwlf.PiecewiseLinFit(np.arange(0, len(dfs)), np.array(dfs["High"]))
+  zzPwlfLo = pwlf.PiecewiseLinFit(np.arange(0, len(dfs)), np.array(dfs["Low"]))
+  resHi = zzPwlfHi.fitfast(20)
+  resLo = zzPwlfLo.fitfast(20)
 
   xHat = []
   for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.to_pydatetime()[0])-1):]:
