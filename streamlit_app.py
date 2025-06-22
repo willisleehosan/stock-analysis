@@ -156,9 +156,19 @@ futureDf = pd.DataFrame(index=(futureDates))
 
 df, dfs = fetchData(ticker)
 df = heikinashi(df)
-alpha, beta, df["residue"] = alphabeta(df, marketDf)
-df["residue"] = df["residue"].rolling(window=50).mean()
-df["residue"] = np.roll(df["residue"], -25)
+resDf = pd.DataFrame(index=df.index)
+alpha, beta, resDf["residue"] = alphabeta(df, marketDf)
+resDf["residue"] = resDf["residue"].rolling(window=50).mean()
+resDf["residue"] = np.roll(df["residue"], -25)
+resX = []
+resY = []
+grouped = resDf.groupby(resDf.index.to_pydatetime().year)
+for name, group in grouped:
+  resX.append(np.array([]))
+  resY.append(np.array(group["residue"].values))
+  grouped2 = group.groupby(group.index.to_pydatetime().month)
+  for name2, group2 in grouped2:
+    resX[len(resX)-1] = np.concat(resX[len(resX)-1], np.arange(name2, name2+1, 1.0/len(group2)))
 df["10SMA"] = df["Close"].rolling(window=10).mean()
 df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
@@ -269,14 +279,15 @@ marketResFig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                              vertical_spacing=0.05, 
                              subplot_titles=[""])
 
-marketResFig.add_trace(go.Scatter(
-  x=df["Date"], 
-  y=df["residue"], 
-  mode="lines", 
-  name="Residue", 
-  line=dict(width=1.5, color="white"), 
-  hoverinfo="none"
-), row=1, col=1)
+for i in range(0, len(resX)):
+  marketResFig.add_trace(go.Scatter(
+    x=resX[i], 
+    y=resY[i], 
+    mode="lines", 
+    name=f"Residue {datetime.now().year + i - len(resX) + 1}", 
+    line=dict(width=1.5, color="white"), 
+    hoverinfo="none"
+  ), row=1, col=1)
 
 marketResFig.update_layout(
   title="Market Residue",
