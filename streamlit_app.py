@@ -296,11 +296,6 @@ marketResFig.update_layout(
   hovermode="x unified",
   spikedistance=-1,
   xaxis=dict(
-    type='category',
-    categoryorder='array',
-    categoryarray=df["Date"].tolist(),
-    range=[len(df)-91, len(df)-1],
-    autorange=False,
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
