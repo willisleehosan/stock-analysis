@@ -162,11 +162,11 @@ resDf["residue"] = resDf["residue"].rolling(window=50).mean()
 resDf["residue"] = np.roll(resDf["residue"], -25)
 resX = []
 resY = []
-grouped = resDf.groupby(resDf.index.to_pydatetime().year)
+grouped = resDf.groupby(resDf.index.to_period("Y"))
 for name, group in grouped:
   resX.append(np.array([]))
   resY.append(np.array(group["residue"].values))
-  grouped2 = group.groupby(group.index.to_pydatetime().month)
+  grouped2 = group.groupby(group.index.to_period("M"))
   for name2, group2 in grouped2:
     resX[len(resX)-1] = np.concat(resX[len(resX)-1], np.arange(name2, name2+1, 1.0/len(group2)))
 df["10SMA"] = df["Close"].rolling(window=10).mean()
