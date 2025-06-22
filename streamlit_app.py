@@ -12,7 +12,7 @@ from plotly.subplots import make_subplots
 import datetime
 
 def fetchData(ticker):
-  df = yf.download(ticker, period="2y", ignore_tz=True)
+  df = yf.download(ticker, start=datetime.now() - datetime.relativedelta(years=3), end=datetime.now(), ignore_tz=True)
   dfs = yf.download(ticker, period="6mo", interval="1h", ignore_tz=True)
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
@@ -145,7 +145,7 @@ def rsi(arr, l):
 ticker = st.text_input("Ticker", "0992") + ".HK"
 
 # market data
-marketDf = yf.download("^HSI", period="2y", ignore_tz=True)
+marketDf = yf.download("^HSI", start=datetime.now() - datetime.relativedelta(years=3), end=datetime.now(), ignore_tz=True)
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
 marketDf.index.tz_localize("Asia/Hong_Kong")
 
@@ -156,7 +156,7 @@ futureDf = pd.DataFrame(index=(futureDates))
 df, dfs = fetchData(ticker)
 df = heikinashi(df)
 alpha, beta, df["residue"] = alphabeta(df, marketDf)
-df["residue"] = df["residue"].rolling(window=10).mean()
+df["residue"] = df["residue"].rolling(window=20).mean()
 df["10SMA"] = df["Close"].rolling(window=10).mean()
 df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
