@@ -42,7 +42,8 @@ def alphabeta(df, marketDf):
   model.fit(abDf["market_ret"].values.reshape(-1, 1), abDf["stock_ret"].values)
   alpha = model.intercept_
   beta = model.coef_[0]
-  return alpha, beta
+  residue = abDf["stock_ret"] - model.predict(abDf["market_ret"])
+  return alpha, beta, residue
 
 def srSMA(df):
   tolerance = 0.01 * df["Close"].iloc[-1]
@@ -154,7 +155,7 @@ futureDf = pd.DataFrame(index=(futureDates))
 
 df, dfs = fetchData(ticker)
 df = heikinashi(df)
-alpha, beta = alphabeta(df, marketDf)
+alpha, beta, df["residue"] = alphabeta(df, marketDf)
 df["10SMA"] = df["Close"].rolling(window=10).mean()
 df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
@@ -166,6 +167,9 @@ df["rsi"] = rsi(df["Close"], 14)
 # clean data
 df = df.reset_index()
 df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
+
+# streamlit layout
+c1, c2 = st.columns(2)
 
 # basic plot
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
@@ -258,4 +262,50 @@ fig.update_layout(
   )
 )
 
-st.plotly_chart(fig, use_container_width=True)
+marketResFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
+                             vertical_spacing=0.05, 
+                             subplot_titles=[""])
+
+marketResFig.add_trace(go.Scatter(
+  x=df["Date"], 
+  y=df["residue"], 
+  mode="lines", 
+  name="Residue", 
+  line=dict(width=1.5, color="white"), 
+  hoverinfo="none"
+), row=1, col=1)
+
+marketResFig.update_layout(
+  title="Market Residue",
+  height=600,
+  xaxis_rangeslider_visible=False,
+  hovermode="x unified",
+  spikedistance=-1,
+  xaxis=dict(
+    type='category',
+    categoryorder='array',
+    categoryarray=df["Date"].tolist(),
+    range=[len(df)-91, len(df)-1],
+    autorange=False,
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  ),
+  yaxis=dict(
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  )
+)
+
+with c1: 
+  st.plotly_chart(fig, use_container_width=True)
+
+with c2: 
+  st.plotly_chart(marketResFig, use_container_width=True)
