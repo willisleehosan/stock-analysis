@@ -9,11 +9,11 @@ import pwlf
 import yfinance as yf
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 def fetchData(ticker):
-  df = yf.download(ticker, start=datetime.datetime.now() - relativedelta(years=3), end=datetime.now(), ignore_tz=True)
+  df = yf.download(ticker, start=datetime.now() - relativedelta(years=3), end=datetime.now(), ignore_tz=True)
   dfs = yf.download(ticker, period="6mo", interval="1h", ignore_tz=True)
   df.columns = ["Close", "High", "Low", "Open", "Volume"]
   dfs.columns = ["Close", "High", "Low", "Open", "Volume"]
@@ -146,7 +146,7 @@ def rsi(arr, l):
 ticker = st.text_input("Ticker", "0992") + ".HK"
 
 # market data
-marketDf = yf.download("^HSI", start=datetime.datetime.now() - relativedelta(years=3), end=datetime.now(), ignore_tz=True)
+marketDf = yf.download("^HSI", start=datetime.now() - relativedelta(years=3), end=datetime.now(), ignore_tz=True)
 marketDf.columns = ["Close", "High", "Low", "Open", "Volume"]
 marketDf.index.tz_localize("Asia/Hong_Kong")
 
