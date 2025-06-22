@@ -42,10 +42,8 @@ def alphabeta(df, marketDf):
   model.fit(abDf["market_ret"].values.reshape(-1, 1), abDf["stock_ret"].values)
   alpha = model.intercept_
   beta = model.coef_[0]
-  residue = abDf["stock_ret"] - model.predict(abDf["market_ret"])
-  return alpha, beta, pd.DataFrame({
-    "residue": residue
-  }, index=(df.index)).dropna()
+  residue = abDf["stock_ret"] - model.predict(abDf["market_ret"].values)
+  return alpha, beta, residue
 
 def srSMA(df):
   tolerance = 0.01 * df["Close"].iloc[-1]
