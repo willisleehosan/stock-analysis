@@ -168,7 +168,7 @@ for name, group in grouped:
   resY.append(np.array(group["residue"].values))
   grouped2 = group.groupby(group.index.to_period("M"))
   for name2, group2 in grouped2:
-    resX[len(resX)-1] = np.concat(resX[len(resX)-1], np.arange(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, 1.0/group2.size))
+    resX[len(resX)-1].append(np.arange(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, 1.0/group2.size))
 df["10SMA"] = df["Close"].rolling(window=10).mean()
 df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
