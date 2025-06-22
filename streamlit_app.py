@@ -43,7 +43,9 @@ def alphabeta(df, marketDf):
   alpha = model.intercept_
   beta = model.coef_[0]
   residue = abDf["stock_ret"] - model.predict(abDf["market_ret"])
-  return alpha, beta, residue
+  return alpha, beta, pd.DataFrame({
+    "residue": residue
+  }, index=(df.index)).dropna()
 
 def srSMA(df):
   tolerance = 0.01 * df["Close"].iloc[-1]
