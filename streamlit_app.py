@@ -159,7 +159,7 @@ df = heikinashi(df)
 resDf = pd.DataFrame(index=df.index)
 alpha, beta, resDf["residue"] = alphabeta(df, marketDf)
 resDf["residue"] = resDf["residue"].rolling(window=50).mean()
-resDf["residue"] = np.roll(df["residue"], -25)
+resDf["residue"] = np.roll(resDf["residue"], -25)
 resX = []
 resY = []
 grouped = resDf.groupby(resDf.index.to_pydatetime().year)
