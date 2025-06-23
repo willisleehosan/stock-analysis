@@ -4,6 +4,7 @@ import bisect
 import pandas as pd
 import numpy as np
 import sklearn
+from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter1d
 import pwlf
 import yfinance as yf
@@ -167,7 +168,16 @@ def season(df, marketDf, sma):
     grouped2 = group.groupby(group.index.to_period("M"))
     for name2, group2 in grouped2:
       ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.linspace(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, num=group2.size//8, endpoint=False))
-  return ssX, ssY
+
+  xGrid = np.linspace(1, 13, num=365, endpoint=False)
+  gridVals = []
+  for xVals, yVals in zip(ssX, ssY):
+    if len(xVals) < 2:
+      continue
+    f = interp1d(xVals, yVals, kind="linear", bounds_error=False, fill_value="extrapolate")
+    gridVals.append(f(xGrid))
+  meanSs = np.nanmean(gridVals, axis=0)
+  return ssX, ssY, gridVals, meanSs
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "0189") + ".HK"
 
@@ -191,7 +201,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df, futureDf)
 df["rsi"] = rsi(df["Close"], 14)
-ssX, ssY = season(df, marketDf, 50)
+ssX, ssY, meanSsX, meanSsY = season(df, marketDf, 50)
 
 # clean data
 df = df.reset_index()
@@ -301,8 +311,16 @@ for i in range(0, len(ssX)):
     y=ssY[i], 
     mode="lines", 
     name=f"Residue {datetime.now().year + i - len(ssX) + 1}", 
-    line=dict(width=1.5, color="white")
+    line=dict(width=1, color="white")
   ), row=1, col=1)
+
+marketSsFig.add_trace(go.Scatter(
+  x=meanSsX[i], 
+  y=meanSsY[i], 
+  mode="lines", 
+  name="Residue mean", 
+  line=dict(width=1.5, color="red")
+), row=1, col=1)
 
 marketSsFig.update_layout(
   title="Market Residue",
