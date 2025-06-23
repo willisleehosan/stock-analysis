@@ -43,8 +43,7 @@ def alphabeta(df, marketDf):
   model.fit(abDf["market_ret"].values.reshape(-1, 1), abDf["stock_ret"].values)
   alpha = model.intercept_
   beta = model.coef_[0]
-  residue = abDf["stock_ret"] - model.predict(abDf["market_ret"].values.reshape(-1, 1))
-  return alpha, beta, residue
+  return alpha, beta
 
 def srSMA(df):
   tolerance = 0.01 * df["Close"].iloc[-1]
@@ -142,8 +141,33 @@ def rsi(arr, l):
   for i in range(0, len(arr)):
     rsi.append(100 * uSmma[i] / (uSmma[i] + dSmma[i]))
   return rsi
+
+def season(df, marketDf, sma):
+  ssDf = pd.DataFrame({
+    "stock_close": df["Close"], 
+    "market_close": marketDf["Close"]
+  }, index=(df.index)).dropna()
+  ssDf["stock_sma"] = np.roll(ssDf["stock_close"].rolling(window=sma).mean(), -sma//2)
+  ssDf["market_sma"] = np.roll(ssDf["market_close"].rolling(window=sma).mean(), -sma//2)
+  ssDf["stock_pct"] = ssDf["stock_sma"].pct_change()
+  ssDf["market_sma"] = ssDf["stock_sma"].pct_change()
+  ssDf = ssDf.dropna()
+
+  model = sklearn.linear_model.LinearRegression()
+  model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
+  ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
+  ssX = []
+  ssY = []
+  grouped = ssDf.groupby(ssDf.index.to_period("Y"))
+  for name, group in grouped:
+    ssX.append(np.array([]))
+    ssY.append(np.array(group["residue"].values))
+    grouped2 = group.groupby(group.index.to_period("M"))
+    for name2, group2 in grouped2:
+      ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.arange(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, 1.0/group2.size))
+  return ssX, ssY
 # ----------------------------------------------
-ticker = st.text_input("Ticker", "0992") + ".HK"
+ticker = st.text_input("Ticker", "0189") + ".HK"
 
 # market data
 marketDf = yf.download("^HSI", start=datetime.now() - relativedelta(years=3), end=datetime.now(), ignore_tz=True)
@@ -157,18 +181,7 @@ futureDf = pd.DataFrame(index=(futureDates))
 df, dfs = fetchData(ticker)
 df = heikinashi(df)
 resDf = pd.DataFrame(index=df.index)
-alpha, beta, resDf["residue"] = alphabeta(df, marketDf)
-resDf["residue"] = resDf["residue"].rolling(window=50).mean()
-resDf["residue"] = np.roll(resDf["residue"], -25)
-resX = []
-resY = []
-grouped = resDf.groupby(resDf.index.to_period("Y"))
-for name, group in grouped:
-  resX.append(np.array([]))
-  resY.append(np.array(group["residue"].values))
-  grouped2 = group.groupby(group.index.to_period("M"))
-  for name2, group2 in grouped2:
-    resX[len(resX)-1] = np.append(resX[len(resX)-1], np.arange(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, 1.0/group2.size))
+alpha, beta = alphabeta(df, marketDf)
 df["10SMA"] = df["Close"].rolling(window=10).mean()
 df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
@@ -176,6 +189,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df, futureDf)
 df["rsi"] = rsi(df["Close"], 14)
+ssX, ssY = season(df, marketDf, 50)
 
 # clean data
 df = df.reset_index()
@@ -275,21 +289,21 @@ fig.update_layout(
   )
 )
 
-marketResFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
+marketSsFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
                              vertical_spacing=0.05, 
                              subplot_titles=[""])
 
 for i in range(0, len(resX)):
-  marketResFig.add_trace(go.Scatter(
-    x=resX[i], 
-    y=resY[i], 
+  marketSsFig.add_trace(go.Scatter(
+    x=ssX[i], 
+    y=ssY[i], 
     mode="lines", 
-    name=f"Residue {datetime.now().year + i - len(resX) + 1}", 
+    name=f"Residue {datetime.now().year + i - len(ssX) + 1}", 
     line=dict(width=1.5, color="white"), 
     hoverinfo="none"
   ), row=1, col=1)
 
-marketResFig.update_layout(
+marketssFig.update_layout(
   title="Market Residue",
   height=600,
   xaxis_rangeslider_visible=False,
