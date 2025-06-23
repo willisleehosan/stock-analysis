@@ -331,4 +331,4 @@ with c1:
   st.plotly_chart(fig, use_container_width=True)
 
 with c2: 
-  st.plotly_chart(marketResFig, use_container_width=True)
+  st.plotly_chart(marketSsFig, use_container_width=True)
