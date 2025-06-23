@@ -166,7 +166,7 @@ def season(df, marketDf, sma):
     ssY.append(np.array(group["deriv"].values))
     grouped2 = group.groupby(group.index.to_period("M"))
     for name2, group2 in grouped2:
-      ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.linspace(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, num=group2.size/8, endpoint=False))
+      ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.linspace(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, num=group2.size//8, endpoint=False))
   return ssX, ssY
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "0189") + ".HK"
