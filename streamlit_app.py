@@ -147,8 +147,8 @@ def season(df, marketDf, sma):
     "stock_close": df["Close"], 
     "market_close": marketDf["Close"]
   }, index=(df.index)).dropna()
-  ssDf["stock_sma"] = np.roll(ssDf["stock_close"].rolling(window=sma).mean(), -sma//2)
-  ssDf["market_sma"] = np.roll(ssDf["market_close"].rolling(window=sma).mean(), -sma//2)
+  ssDf["stock_sma"] = ssDf["stock_close"].rolling(window=sma, center=True).mean()
+  ssDf["market_sma"] = ssDf["market_close"].rolling(window=sma, center=True).mean()
   ssDf["stock_pct"] = ssDf["stock_sma"].pct_change()
   ssDf["market_pct"] = ssDf["market_sma"].pct_change()
   ssDf = ssDf.dropna()
@@ -156,8 +156,8 @@ def season(df, marketDf, sma):
   model = sklearn.linear_model.LinearRegression()
   model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
   ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
-  ssDf["deriv"] = np.roll(ssDf["residue"].rolling(window=sma).mean(), -sma//2)
-  ssDf = ssDf.diff()
+  ssDf["deriv"] = ssDf["residue"].rolling(window=sma, center=True).mean()
+  ssDf["deriv"] = ssDf["deriv"].diff()
   ssX = []
   ssY = []
   grouped = ssDf.groupby(ssDf.index.to_period("Y"))
@@ -166,7 +166,7 @@ def season(df, marketDf, sma):
     ssY.append(np.array(group["deriv"].values))
     grouped2 = group.groupby(group.index.to_period("M"))
     for name2, group2 in grouped2:
-      ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.arange(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, 7.0/group2.size))
+      ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.linspace(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, num=group2.size/8, endpoint=False))
   return ssX, ssY
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "0189") + ".HK"
