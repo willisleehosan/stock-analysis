@@ -298,7 +298,48 @@ fig.update_layout(
     spikesnap='cursor',
     spikemode='across',
     spikethickness=2
-  )
+  ), 
+  shapes=[
+    dict(
+      type="line", 
+      xref="paper", 
+      yref="y2", 
+      x0=0, 
+      x1=1, 
+      y0=70, 
+      y1=70, 
+      line=dict(
+        color="green", 
+        width=2
+      )
+    ), 
+    dict(
+      type="line", 
+      xref="paper", 
+      yref="y2", 
+      x0=0, 
+      x1=1, 
+      y0=50, 
+      y1=50, 
+      line=dict(
+        color="cyan", 
+        width=2
+      )
+    ), 
+    dict(
+      type="line", 
+      xref="paper", 
+      yref="y2", 
+      x0=0, 
+      x1=1, 
+      y0=30, 
+      y1=30, 
+      line=dict(
+        color="red", 
+        width=2
+      )
+    )
+  ]
 )
 
 marketSsFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
@@ -311,7 +352,7 @@ for i in range(0, len(ssX)):
     y=ssY[i], 
     mode="lines", 
     name=f"Residue {datetime.now().year + i - len(ssX) + 1}", 
-    line=dict(width=1, color="white")
+    line=dict(width=1, color="grey")
   ), row=1, col=1)
 
 marketSsFig.add_trace(go.Scatter(
@@ -343,7 +384,22 @@ marketSsFig.update_layout(
     spikesnap='cursor',
     spikemode='across',
     spikethickness=2
-  )
+  ), 
+  shapes=[
+    dict(
+      type="line", 
+      xref="paper", 
+      yref="y", 
+      x0=0, 
+      x1=1, 
+      y0=0, 
+      y1=0, 
+      line=dict(
+        color="white", 
+        width=2
+      )
+    )
+  ]
 )
 
 with c1: 
