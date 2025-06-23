@@ -311,7 +311,8 @@ fig.update_layout(
       line=dict(
         color="green", 
         width=2
-      )
+      ), 
+      layer="below"
     ), 
     dict(
       type="line", 
@@ -324,7 +325,8 @@ fig.update_layout(
       line=dict(
         color="cyan", 
         width=2
-      )
+      ), 
+      layer="below"
     ), 
     dict(
       type="line", 
@@ -337,7 +339,8 @@ fig.update_layout(
       line=dict(
         color="red", 
         width=2
-      )
+      ), 
+      layer="below"
     )
   ]
 )
@@ -397,7 +400,8 @@ marketSsFig.update_layout(
       line=dict(
         color="white", 
         width=2
-      )
+      ), 
+      layer="below"
     )
   ]
 )
