@@ -156,12 +156,14 @@ def season(df, marketDf, sma):
   model = sklearn.linear_model.LinearRegression()
   model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
   ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
+  ssDf["deriv"] = np.roll(ssDf["residue"].rolling(window=sma).mean(), -sma//2)
+  ssDf = ssDf.diff()
   ssX = []
   ssY = []
   grouped = ssDf.groupby(ssDf.index.to_period("Y"))
   for name, group in grouped:
     ssX.append(np.array([]))
-    ssY.append(np.array(group["residue"].values))
+    ssY.append(np.array(group["deriv"].values))
     grouped2 = group.groupby(group.index.to_period("M"))
     for name2, group2 in grouped2:
       ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.arange(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, 7.0/group2.size))
