@@ -303,7 +303,7 @@ for i in range(0, len(ssX)):
     hoverinfo="none"
   ), row=1, col=1)
 
-marketssFig.update_layout(
+marketSsFig.update_layout(
   title="Market Residue",
   height=600,
   xaxis_rangeslider_visible=False,
