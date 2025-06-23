@@ -177,6 +177,7 @@ def season(df, marketDf, sma):
     f = interp1d(xVals, yVals, kind="linear", bounds_error=False, fill_value="extrapolate")
     gridVals.append(f(xGrid))
   meanSs = np.nanmean(gridVals, axis=0)
+  st.write(meanSs)
   return ssX, ssY, gridVals, meanSs
 # ----------------------------------------------
 ticker = st.text_input("Ticker", "0189") + ".HK"
