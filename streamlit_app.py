@@ -315,8 +315,8 @@ for i in range(0, len(ssX)):
   ), row=1, col=1)
 
 marketSsFig.add_trace(go.Scatter(
-  x=meanSsX[i], 
-  y=meanSsY[i], 
+  x=meanSsX, 
+  y=meanSsY, 
   mode="lines", 
   name="Residue mean", 
   line=dict(width=1.5, color="red")
