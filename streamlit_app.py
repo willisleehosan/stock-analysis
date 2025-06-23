@@ -150,7 +150,7 @@ def season(df, marketDf, sma):
   ssDf["stock_sma"] = np.roll(ssDf["stock_close"].rolling(window=sma).mean(), -sma//2)
   ssDf["market_sma"] = np.roll(ssDf["market_close"].rolling(window=sma).mean(), -sma//2)
   ssDf["stock_pct"] = ssDf["stock_sma"].pct_change()
-  ssDf["market_sma"] = ssDf["stock_sma"].pct_change()
+  ssDf["market_pct"] = ssDf["market_sma"].pct_change()
   ssDf = ssDf.dropna()
 
   model = sklearn.linear_model.LinearRegression()
