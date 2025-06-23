@@ -301,8 +301,7 @@ for i in range(0, len(ssX)):
     y=ssY[i], 
     mode="lines", 
     name=f"Residue {datetime.now().year + i - len(ssX) + 1}", 
-    line=dict(width=1.5, color="white"), 
-    hoverinfo="none"
+    line=dict(width=1.5, color="white")
   ), row=1, col=1)
 
 marketSsFig.update_layout(
