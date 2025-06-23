@@ -293,7 +293,7 @@ marketSsFig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                              vertical_spacing=0.05, 
                              subplot_titles=[""])
 
-for i in range(0, len(resX)):
+for i in range(0, len(ssX)):
   marketSsFig.add_trace(go.Scatter(
     x=ssX[i], 
     y=ssY[i], 
