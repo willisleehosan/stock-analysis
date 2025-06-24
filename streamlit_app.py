@@ -305,7 +305,7 @@ fig.update_layout(
     spikemode='across',
     spikethickness=2
   ), 
-  yaxis=dict(
+  yaxis2=dict(
     showticklabels=False, 
     ticks="", 
     showgrid=False, 
