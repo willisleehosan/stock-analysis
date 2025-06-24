@@ -364,7 +364,7 @@ marketSsFig.add_trace(go.Scatter(
   mode="lines", 
   name="Residue mean", 
   line=dict(width=1.5, color="red"), 
-  hoverinfo=False
+  hoverinfo="none"
 ), row=1, col=1)
 
 marketSsFig.update_layout(
