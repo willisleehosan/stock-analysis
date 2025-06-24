@@ -407,7 +407,7 @@ marketSsFig.update_layout(
 month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 for month in range(1, 13):  
-  fig.add_shape(
+  marketSsFig.add_shape(
     type="line",
     xref="x", 
     yref="paper", 
@@ -423,7 +423,7 @@ for month in range(1, 13):
     layer="below"
   )
 
-  fig.add_annotation(
+  marketSsFig.add_annotation(
     xref="x", 
     yref="paper", 
     xanchor="center", 
