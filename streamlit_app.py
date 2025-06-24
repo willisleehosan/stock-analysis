@@ -289,7 +289,13 @@ fig.update_layout(
   xaxis2=dict(
     type="category", 
     categoryorder="array", 
-    categoryarray=df["Date"].tolist()
+    categoryarray=df["Date"].tolist(), 
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
   ), 
   yaxis=dict(
     showspikes=True,
@@ -298,6 +304,12 @@ fig.update_layout(
     spikesnap='cursor',
     spikemode='across',
     spikethickness=2
+  ), 
+  yaxis=dict(
+    showticklabels=False, 
+    ticks="", 
+    showgrid=False, 
+    zeroline=False
   ), 
   shapes=[
     dict(
@@ -376,15 +388,18 @@ marketSsFig.update_layout(
   xaxis=dict(
     tickmode="array", 
     tickvals=[], 
-    showticklabels=False
-  ), 
-  yaxis=dict(
+    showticklabels=False,
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
     spikesnap='cursor',
     spikemode='across',
     spikethickness=2
+  ), 
+  yaxis=dict(
+    showticklabels=False, 
+    ticks="", 
+    showgrid=False
   ), 
   shapes=[
     dict(
@@ -429,12 +444,13 @@ for month in range(1, 13):
     xanchor="center", 
     yanchor="top", 
     x=month + 0.5, 
-    y=1, 
+    y=0, 
     text=month_labels[month-1], 
     font=dict(
       size=10, 
       color="gray"
-    )
+    ), 
+    showarrow=False
   )
 
 with c1: 
