@@ -200,7 +200,8 @@ df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 gCrosses, dCrosses = gdCross(df, futureDf)
-df["rsi"] = rsi(df["Close"], 14)
+df["rsi14"] = rsi(df["Close"], 14)
+df["rsi9"] = rsi(df["Close"], 9)
 ssX, ssY, meanSsX, meanSsY = season(df, marketDf, 50)
 
 # clean data
@@ -257,10 +258,19 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
 
 fig.add_trace(go.Scatter(
   x=df["Date"], 
-  y=df["rsi"], 
+  y=df["rsi14"], 
   mode="lines", 
   name="14-D RSI", 
-  line=dict(width=1.5, color="white") ,
+  line=dict(width=1.5, color="cyan"),
+  hoverinfo="none"
+), row=2, col=1)
+
+fig.add_trace(go.Scatter(
+  x=df["Date"], 
+  y=df["rsi9"], 
+  mode="lines", 
+  name="9-D RSI", 
+  line=dict(width=1.5, color="orange"), 
   hoverinfo="none"
 ), row=2, col=1)
 
