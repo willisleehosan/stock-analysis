@@ -363,7 +363,8 @@ marketSsFig.add_trace(go.Scatter(
   y=meanSsY, 
   mode="lines", 
   name="Residue mean", 
-  line=dict(width=1.5, color="red")
+  line=dict(width=1.5, color="red"), 
+  hoverinfo=False
 ), row=1, col=1)
 
 marketSsFig.update_layout(
@@ -373,13 +374,10 @@ marketSsFig.update_layout(
   hovermode="x unified",
   spikedistance=-1,
   xaxis=dict(
-    showspikes=True,
-    spikecolor='rgba(255,255,255,0.3)',
-    spikedash='solid',
-    spikesnap='cursor',
-    spikemode='across',
-    spikethickness=2
-  ),
+    tickmode="array", 
+    tickvals=[], 
+    showtickvalues=False
+  ), 
   yaxis=dict(
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
@@ -405,6 +403,39 @@ marketSsFig.update_layout(
     )
   ]
 )
+
+month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+for month in range(1, 13):  
+  fig.add_shape(
+    type="line",
+    xref="x", 
+    yref="paper", 
+    x0=month, 
+    x1=month,
+    y0=0, 
+    y1=1,  
+    line=dict(
+      color="gray", 
+      width=0.5, 
+      dash="dash"
+    ),
+    layer="below"
+  )
+
+  fig.add_annotation(
+    xref="x", 
+    yref="paper", 
+    xanchor="center", 
+    yanchor="top", 
+    x=month + 0.5, 
+    y=1, 
+    text=month_labels[month-1], 
+    font=dict(
+      size=10, 
+      color="gray"
+    )
+  )
 
 with c1: 
   st.plotly_chart(fig, use_container_width=True)
