@@ -376,7 +376,7 @@ marketSsFig.update_layout(
   xaxis=dict(
     tickmode="array", 
     tickvals=[], 
-    showtickvalues=False
+    showticklabels=False
   ), 
   yaxis=dict(
     showspikes=True,
