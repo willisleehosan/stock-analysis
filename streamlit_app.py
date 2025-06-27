@@ -468,3 +468,8 @@ with c1:
 
 with c2: 
   st.plotly_chart(marketSsFig, use_container_width=True)
+
+st.markdown("---")
+
+with st.container():
+  b1, b2 = st.columns([1, 2.5])
