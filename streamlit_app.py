@@ -219,6 +219,7 @@ obsPlotKey = {
 obsPlot = {}
 # ----------------------------------------------
 obs = []
+st.session_state.obsPlot = None
 
 ticker = st.text_input("Ticker", "0189") + ".HK"
 
