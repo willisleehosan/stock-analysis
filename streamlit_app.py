@@ -100,16 +100,16 @@ def gdCross(df, futureDf):
     nanIdx = smaEx[smaEx[sma_col].isna() & (smaEx.index >= df.index[-1])].index
     smaEx.loc[nanIdx, sma_col] = yFuture
   
-  gCrosses = []
-  dCrosses = []
+  smac = []
+  smaTag = ["20SMA", "50SMA", "100SMA"]
   for i in range(1, len(smaEx)):
-    for (shortSMA, longSMA) in [("20SMA", "50SMA"), ("20SMA", "100SMA"), ("50SMA", "100SMA")]:
-      if (smaEx[shortSMA].iloc[i-1] <= smaEx[longSMA].iloc[i-1]) and (smaEx[shortSMA].iloc[i] > smaEx[longSMA].iloc[i]):
-        gCrosses.append(smaEx.index[i])
-      elif (smaEx[shortSMA].iloc[i-1] >= smaEx[longSMA].iloc[i-1]) and (smaEx[shortSMA].iloc[i] < smaEx[longSMA].iloc[i]):
-        dCrosses.append(smaEx.index[i])
+    for (shortSMA, longSMA) in [(0, 1), (0, 2), (1, 2)]:
+      if (smaEx[smaTag[shortSMA]].iloc[i-1] <= smaEx[smaTag[longSMA]].iloc[i-1]) and (smaEx[smaTag[shortSMA]].iloc[i] > smaEx[smaTag[longSMA]].iloc[i]):
+        smac.append([f"gc{shortSMA}{longSMA}", smaEx.index[i-1], smaEx.index[i]])
+      elif (smaEx[smaTag[shortSMA]].iloc[i-1] >= smaEx[smaTag[longSMA]].iloc[i-1]) and (smaEx[smaTag[shortSMA]].iloc[i] < smaEx[smaTag[longSMA]].iloc[i]):
+        smac.append([f"dc{shortSMA}{longSMA}", smaEx.index[i-1], smaEx.index[i]])
 
-  return gCrosses, dCrosses
+  return smac
 
 def zigzag(df, dfs):  
   zzPwlfHi = pwlf.PiecewiseLinFit(np.arange(0, len(dfs)), np.array(dfs["High"]))
@@ -178,7 +178,36 @@ def season(df, marketDf, sma):
     gridVals.append(f(xGrid))
   meanSs = np.nanmean(gridVals, axis=0)
   return ssX, ssY, xGrid, meanSs
+
+obsTit = {
+  "gc01": "Golden Cross", 
+  "gc02": "Golden Cross", 
+  "gc12": "Golden Cross", 
+  "dc01": "Death Cross", 
+  "dc02": "Death Cross", 
+  "dc12": "Death Cross"
+}
+
+obsDesc = {
+  "gc01": "20-D SMA > 50-D SMA", 
+  "gc02": "20-D SMA > 100-D SMA", 
+  "gc12": "50-D SMA > 100-D SMA", 
+  "dc01": "20-D SMA < 50-D SMA", 
+  "dc02": "20-D SMA < 100-D SMA", 
+  "dc12": "50-D SMA < 100-D SMA"
+}
+
+obsBull = {
+  "gc01": True, 
+  "gc02": True, 
+  "gc12": True, 
+  "dc01": False, 
+  "dc02": False, 
+  "dc12": False
+}
 # ----------------------------------------------
+obs = []
+
 ticker = st.text_input("Ticker", "0189") + ".HK"
 
 # market data
@@ -199,7 +228,7 @@ df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
-gCrosses, dCrosses = gdCross(df, futureDf)
+obs += gdCross(df, futureDf)
 df["rsi14"] = rsi(df["Close"], 14)
 df["rsi9"] = rsi(df["Close"], 9)
 ssX, ssY, meanSsX, meanSsY = season(df, marketDf, 50)
@@ -473,3 +502,20 @@ st.markdown("---")
 
 with st.container():
   b1, b2 = st.columns([1, 2.5])
+  st.markdown("""
+    <style>
+    .scroll-box {
+      max-height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    </style>
+  """, unsafe_allow_html=True)
+  
+  with b1: 
+    st.markdown("### Observations")
+    options = [f"**{obsTit[item[0]]}** \n{obsDesc[item[0]]}" for item in obs]
+    st.markdown('<div class="scroll-box">', unsafe_allow_html=True)
+    selected = st.radio("Observations", options)
+    st.markdown('</div>', unsafe_allow_html=True)
