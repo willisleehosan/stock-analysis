@@ -406,7 +406,8 @@ for i in range(0, len(ssX)):
     y=ssY[i], 
     mode="lines", 
     name=f"Residue {datetime.now().year + i - len(ssX) + 1}", 
-    line=dict(width=1, color="grey")
+    line=dict(width=1, color=f"rgb({i*100//(len(ssX)-1)+100}, {i*100//(len(ssX)-1)+100}, {i*100//(len(ssX)-1)+100})"), 
+    hoverinfo="none"
   ), row=1, col=1)
 
 marketSsFig.add_trace(go.Scatter(
