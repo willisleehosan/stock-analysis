@@ -509,16 +509,17 @@ with st.container():
     obs.sort(reverse=True, key=lambda a: a[2])
     st.markdown("### Observations")
     st.markdown("---")
-    with st.container(height=300):with stylable_container(key="my_unique_button",css_styles="""
-      {
-        [data-testid="baseButton-secondary"] {
-            background-color: rgba(255, 0, 0, 0.3);
+    with st.container(height=300):
+      with stylable_container(key="my_unique_button",css_styles="""
+        {
+          [data-testid="baseButton-secondary"] {
+              background-color: rgba(255, 0, 0, 0.3);
+          }
+  
+          [data-testid="baseButton-primary"] {
+              background-color: rgba(0, 255, 0, 0.3);
+          }
         }
-
-        [data-testid="baseButton-primary"] {
-            background-color: rgba(0, 255, 0, 0.3);
-        }
-      }
       """,):
       for i, item in enumerate(obs):
         startD = item[1].strftime("%d/%m/%Y")
