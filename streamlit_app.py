@@ -516,9 +516,9 @@ with st.container():
         with stylable_container(
           key=item[0], 
           css_styles=f"""
-            button \{
+            button {{
               background-color: {"rgba(0, 255, 0, 0.3)" if obsBull[item[0]] else "rgba(255, 0, 0, 0.3)"}
-            \}
+            }}
           """
         ):
           st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}")
