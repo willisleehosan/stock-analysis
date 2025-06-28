@@ -515,6 +515,8 @@ with st.container():
   
   with b1: 
     st.markdown("### Observations")
-    options = [f"**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}" for item in obs]
     st.write('<div class="scroll-box"></div>', unsafe_allow_html=True)
-    selected = st.radio("", options)
+    for i, item in enumerate(obs):
+      startD = item[1].strftime("%d/%m/%Y")
+      endD = item[2].strftime("%d/%m/%Y")
+      st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}")
