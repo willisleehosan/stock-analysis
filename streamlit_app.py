@@ -599,7 +599,7 @@ with st.container():
             st.session_state.obsPlot = item[0]
 
   with b2:
-    if obsPlotKey.has_key(st.session_state.obsPlot):
+    if st.session_state.obsPlot in obsPlotKey:
       st.plotly_chart(obsPlot[obsPlotKey[st.session_state.obsPlot]], use_container_width=True)
     else:
       st.container(border=True, height=600).write("No available plots")
