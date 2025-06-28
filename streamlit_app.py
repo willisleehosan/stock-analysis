@@ -516,6 +516,5 @@ with st.container():
   with b1: 
     st.markdown("### Observations")
     options = [f"**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}" for item in obs]
-    st.write('<div class="scroll-box">', unsafe_allow_html=True)
-    selected = st.radio("Observations", options)
-    st.write('</div>', unsafe_allow_html=True)
+    st.write('<div class="scroll-box"></div>', unsafe_allow_html=True)
+    selected = st.radio("", options)
