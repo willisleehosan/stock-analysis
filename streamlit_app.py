@@ -506,20 +506,9 @@ with st.container():
   with b1: 
     obs.sort(reverse=True, key=lambda a: a[2])
     st.markdown("### Observations")
-    st.write('<div class="scroll-box">', unsafe_allow_html=True)
-    for i, item in enumerate(obs):
-      startD = item[1].strftime("%d/%m/%Y")
-      endD = item[2].strftime("%d/%m/%Y")
-      st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}")
-    st.write("</div", unsafe_allow_html=True)
-
-    st.markdown("""
-      <style>
-      .scroll-box {
-        max-height: 300px;
-        overflow-y: scroll;
-        border: 1px solid #ccc;
-        padding: 10px;
-      }
-      </style>
-    """, unsafe_allow_html=True)
+    st.markdown("---")
+    with st.container(height=300):
+      for i, item in enumerate(obs):
+        startD = item[1].strftime("%d/%m/%Y")
+        endD = item[2].strftime("%d/%m/%Y")
+        st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}")
