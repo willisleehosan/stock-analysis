@@ -508,8 +508,18 @@ with st.container():
     obs.sort(reverse=True, key=lambda a: a[2])
     st.markdown("### Observations")
     st.markdown("---")
-    with st.container(height=300):
+    with st.container(height=300):with stylable_container(key="my_unique_button",css_styles="""
+      {
+        [data-testid="baseButton-secondary"] {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+
+        [data-testid="baseButton-primary"] {
+            background-color: rgba(0, 255, 0, 0.3);
+        }
+      }
+      """,):
       for i, item in enumerate(obs):
         startD = item[1].strftime("%d/%m/%Y")
         endD = item[2].strftime("%d/%m/%Y")
-        st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}")
+        st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}",type="primary" if obsBull[item[0]] else "secondary" , key=f"obs_button_{i}")
