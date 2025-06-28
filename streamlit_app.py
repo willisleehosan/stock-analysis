@@ -515,8 +515,9 @@ with st.container():
   
   with b1: 
     st.markdown("### Observations")
-    st.write('<div class="scroll-box"></div>', unsafe_allow_html=True)
+    st.write('<div class="scroll-box">', unsafe_allow_html=True)
     for i, item in enumerate(obs):
       startD = item[1].strftime("%d/%m/%Y")
       endD = item[2].strftime("%d/%m/%Y")
       st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}")
+    st.write("</div", unsafe_allow_html=True)
