@@ -514,7 +514,7 @@ with st.container():
         startD = item[1].strftime("%d/%m/%Y")
         endD = item[2].strftime("%d/%m/%Y")
         with stylable_container(
-          key=item[0], 
+          key=f"obs_container_{i}", 
           css_styles=f"""
             button {{
               background-color: {"rgba(0, 255, 0, 0.3)" if obsBull[item[0]] else "rgba(255, 0, 0, 0.3)"}
