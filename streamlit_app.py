@@ -206,6 +206,17 @@ obsBull = {
   "dc02": False, 
   "dc12": False
 }
+
+obsPlotKey = {
+  "gc01": "sma", 
+  "gc02": "sma", 
+  "gc12": "sma", 
+  "dc01": "sma", 
+  "dc02": "sma", 
+  "dc12": "sma"
+}
+
+obsPlot = {}
 # ----------------------------------------------
 obs = []
 
@@ -494,6 +505,69 @@ for month in range(1, 13):
     showarrow=False
   )
 
+obsPlot["sma"] = make_subplots(rows=1, cols=1, shared_xaxes=True, 
+                       vertical_spacing=0.05, 
+                       subplot_titles=[""])
+
+obsPlot["sma"].add_trace(go.Scatter(
+  x=df['Date'],
+  y=df["20SMA"],
+  mode='lines',
+  name="20-D SMA",
+  line=dict(width=1.5, color="red"),
+  hoverinfo="none"
+), row=1, col=1)
+
+obsPlot["sma"].add_trace(go.Scatter(
+  x=df['Date'],
+  y=df["50SMA"],
+  mode='lines',
+  name="50-D SMA",
+  line=dict(width=1.5, color="orange"),
+  hoverinfo="none"
+), row=1, col=1)
+
+obsPlot["sma"].add_trace(go.Scatter(
+  x=df['Date'],
+  y=df["100SMA"],
+  mode='lines',
+  name="100-D SMA",
+  line=dict(width=1.5, color="yellow"),
+  hoverinfo="none"
+), row=1, col=1)
+
+obsPlot["sma"].update_layout(
+  title="SMA plot",
+  yaxis_title="Price",
+  height=600,
+  xaxis_rangeslider_visible=False,
+  hovermode="x unified",
+  spikedistance=-1,
+  xaxis=dict(
+    type='category',
+    categoryorder='array',
+    categoryarray=df["Date"].tolist(),
+    range=[len(df)-91, len(df)-1],
+    autorange=False,
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  ),
+  yaxis=dict(
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  )
+)
+
+# --------------------------------------------------
+
 with c1: 
   st.plotly_chart(fig, use_container_width=True)
 
@@ -521,4 +595,11 @@ with st.container():
             }}
           """
         ):
-          st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}")
+          if st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}"):
+            st.session_state.obsPlot = item[0]
+
+  with b2:
+    if obsPlotKey.has_key(st.session_state.obsPlot):
+      st.plotly_chart(obsPlot[obsPlotKey[st.session_state.obsPlot]], use_container_width=True)
+    else:
+      st.container(border=True, height=600).write("No available plots")
