@@ -217,6 +217,10 @@ obsPlotKey = {
 }
 
 obsPlot = {}
+
+obsPlotName = {
+  "sma": "Simple Moving Average Ribbon"
+}
 # ----------------------------------------------
 obs = []
 st.session_state.obsPlot = None
@@ -510,6 +514,19 @@ obsPlot["sma"] = make_subplots(rows=1, cols=1, shared_xaxes=True,
                        vertical_spacing=0.05, 
                        subplot_titles=[""])
 
+obsPlot.add_trace(go.Candlestick(
+  x=df['Date'],
+  open=df['Open'], high=df['High'],
+  low=df['Low'], close=df['Close'],
+  increasing_line_color='rgba(0,100,0,0.5)',  # light green
+  decreasing_line_color='rgba(100,0,0,0.5)',  # light red
+  increasing_fillcolor='rgba(0,100,0,0.5)',
+  decreasing_fillcolor='rgba(100,0,0,0.5)',
+  opacity=1,
+  name='Raw Candlestick', 
+  hoverinfo="none"
+), row=1, col=1)
+
 obsPlot["sma"].add_trace(go.Scatter(
   x=df['Date'],
   y=df["20SMA"],
@@ -597,10 +614,23 @@ with st.container():
           """
         ):
           if st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}"):
-            st.session_state.obsPlot = item[0]
+            if item[0] in obsPlotKey:
+              st.session_state.obsPlot = obsPlotKey[item[0]]
+            else: 
+              st.session_state.obsPlot = None
 
   with b2:
-    if st.session_state.obsPlot in obsPlotKey:
-      st.plotly_chart(obsPlot[obsPlotKey[st.session_state.obsPlot]], use_container_width=True)
+    dropdown = st.selectbox(
+      "Select Plot", 
+      obsPlot.keys(), 
+      index=None, 
+      key="obs_dropdown", 
+      format_func=lambda a: obsPlotName[a]
+    )
+    if dropdown != st.session_state.obsPlot:
+      st.session_state.obsPlot = dropdown
+    
+    if st.session_state.obsPlot in obsPlot:
+      st.plotly_chart(obsPlot[st.session_state.obsPlot], use_container_width=True)
     else:
       st.container(border=True, height=600).write("No available plots")
