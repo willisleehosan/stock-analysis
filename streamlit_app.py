@@ -621,7 +621,7 @@ with st.container():
               st.write(st.session_state["obsPlot"])
 
   with b2:
-    st.write(st.session_state["obsPlot"]
+    st.write(st.session_state["obsPlot"])
     dropdown = st.selectbox(
       "Select Plot", 
       obsPlot.keys(), 
