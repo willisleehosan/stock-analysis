@@ -616,8 +616,8 @@ with st.container():
           """
         ):
           if st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}"):
-            if item[0] in obsPlotKey:
-              st.session_state["obs_dropdown"] = list(obsPlot.keys()).index(obsPlotKey[obsKey])
+            if obsKey in obsPlotKey:
+              st.session_state["obs_dropdown"] = obsPlotKey[obsKey]
               st.write(st.session_state["obs_dropdown"])
 
   with b2:
