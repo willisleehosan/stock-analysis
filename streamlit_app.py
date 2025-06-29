@@ -152,11 +152,11 @@ def rsiAn(df):
   startD = None
   while i < len(df["Close"].values):
     if startD:
-      if df["rsi"] < 70:
+      if df["rsi"].iloc[i] < 70:
         rsiObs.append(["rsiob", df.index[startD], df.index[i-1]])
         startD = None
     else:
-      if df["rsi"] >= 70:
+      if df["rsi"].iloc[i] >= 70:
         startD = i
     i += 1
 
@@ -165,11 +165,11 @@ def rsiAn(df):
   startD = None
   while i < len(df["Close"].values):
     if startD:
-      if df["rsi"] > 30:
+      if df["rsi"].iloc[i] > 30:
         rsiObs.append(["rsios", df.index[startD], df.index[i-1]])
         startD = None
       else:
-        if df["rsi"] <= 30:
+        if df["rsi"].iloc[i] <= 30:
           startD = i
       i += 1
 
