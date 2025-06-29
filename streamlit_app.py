@@ -533,9 +533,24 @@ obsPlot["sma"].update_layout(
   )
 )
 
-obsPlot["rsi"] = make_subplots(rows=1, cols=1, shared_xaxes=True, 
-                       vertical_spacing=0.05, 
-                       subplot_titles=[""])
+obsPlot["rsi"] = make_subplots(rows=2, cols=1, shared_xaxes=True, 
+                               vertical_spacing=0.05, 
+                               subplot_titles=["", ""], 
+                              row_heights=[0.7, 0.3])
+
+obsPlot["rsi"].add_trace(go.Candlestick(
+  x=df['Date'],
+  open=df['Open'], high=df['High'],
+  low=df['Low'], close=df['Close'],
+  increasing_line_color='green',
+  decreasing_line_color='red',
+  increasing_fillcolor='rgba(0, 0, 0, 0)',
+  decreasing_fillcolor='rgba(0, 0, 0, 0)',
+  line_width=1,
+  opacity=1,
+  name='Raw Candlestick',
+  hoverinfo="none"
+), row=1, col=1)
 
 obsPlot["rsi"].add_trace(go.Scatter(
   x=df["Date"], 
@@ -544,7 +559,7 @@ obsPlot["rsi"].add_trace(go.Scatter(
   name="14-D RSI", 
   line=dict(width=1.5, color="cyan"),
   hoverinfo="none"
-), row=1, col=1)
+), row=2, col=1)
 
 obsPlot["rsi"].update_layout(
   title="RSI plot",
@@ -566,7 +581,27 @@ obsPlot["rsi"].update_layout(
     spikemode='across',
     spikethickness=2
   ),
+  xaxis2=dict(
+    type="category", 
+    categoryorder="array", 
+    categoryarray=df["Date"].tolist(), 
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  ), 
   yaxis=dict(
+    range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  ), 
+  yaxis2=dict(
     range=[0, 100],
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
