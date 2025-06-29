@@ -158,6 +158,8 @@ def season(df, marketDf, sma):
   model = sklearn.linear_model.LinearRegression()
   model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
   ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
+  ssDf["rsr"] = ssDf["residue"].rolling(window=sma).mean()
+  ssDf["rsm"] = ssDf["rsr"].diff().rolling(window=sma).mean()
   ssDf["deriv"] = ssDf["residue"].rolling(window=sma, center=True).mean()
   ssDf["deriv"] = ssDf["deriv"].diff()
   ssX = []
@@ -178,7 +180,7 @@ def season(df, marketDf, sma):
     f = interp1d(xVals, yVals, kind="linear", bounds_error=False, fill_value="extrapolate")
     gridVals.append(f(xGrid))
   meanSs = np.nanmean(gridVals, axis=0)
-  return ssX, ssY, xGrid, meanSs
+  return ssX, ssY, xGrid, meanSs, ssDf["rsr"], ssDf["rsm"]
 
 obsTit = {
   "gc01": "Golden Cross", 
@@ -220,7 +222,8 @@ obsPlot = {}
 
 obsPlotName = {
   "sma": "Simple Moving Average Ribbon", 
-  "rsi": "Relative Strength Index"
+  "rsi": "Relative Strength Index", 
+  "rrg": "Relative Rotation Graph"
 }
 # ----------------------------------------------
 obs = []
@@ -247,7 +250,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 obs += gdCross(df, futureDf)
 df["rsi14"] = rsi(df["Close"], 14)
-ssX, ssY, meanSsX, meanSsY = season(df, marketDf, 50)
+ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
 
 # clean data
 df = df.reset_index()
@@ -534,7 +537,7 @@ obsPlot["sma"].update_layout(
 obsPlot["rsi"] = make_subplots(rows=2, cols=1, shared_xaxes=True, 
                                vertical_spacing=0.05, 
                                subplot_titles=["", ""], 
-                              row_heights=[0.7, 0.3])
+                               row_heights=[0.7, 0.3])
 
 obsPlot["rsi"].add_trace(go.Candlestick(
   x=df['Date'],
@@ -655,6 +658,32 @@ obsPlot["rsi"].update_layout(
       layer="below"
     )
   ]
+)
+
+obsPlot["rrg"] = make_subplots(rows=1, cols=1, shared_xaxes=True, 
+                               vertical_spacing=0.05, 
+                               subplot_titles=[""])
+
+obsPlot["rrg"].add_trace(go.Scatter(
+  x=df["rsr"], 
+  y=df["rsm"], 
+  mode="lines+markers", 
+  name="Relative Rotation Trail", 
+  text=df["Date"], 
+  line_shape="spline"
+), row=1, col=1)
+
+obsPlot["rrg"].update_layout(
+  title="RRG plot",
+  xaxis_title="Relative Strength Ratio", 
+  yaxis_title="Relative Strength Momentum",
+  height=600,
+  xaxis=dict(
+    showspikes=False
+  ),
+  yaxis=dict(
+    showspikes=False
+  )
 )
 
 # --------------------------------------------------
