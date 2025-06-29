@@ -624,6 +624,7 @@ with st.container():
           st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}", args=(obsKey,), on_click=obsButClick)
 
   with b2:
+    st.write(st.session_state.obsPlot)
     dropdown = st.selectbox(
       "Select Plot", 
       obsPlot.keys(), 
