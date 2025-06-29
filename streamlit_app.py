@@ -38,8 +38,8 @@ def alphabeta(df, marketDf):
     "stock_close": df["Close"],
     "market_close": marketDf["Close"]
   }, index=(df.index)).dropna()
-  abDf["stock_ret"] = np.log(abDf["stock_close"]).diff()
-  abDf["market_ret"] = np.log(abDf["market_close"]).diff()
+  abDf["stock_ret"] = abDf["stock_close"].pct_change()
+  abDf["market_ret"] = abDf["market_close"].pct_change()
   abDf = abDf.dropna()
   model = sklearn.linear_model.LinearRegression()
   model.fit(abDf["market_ret"].values.reshape(-1, 1), abDf["stock_ret"].values)
@@ -151,23 +151,21 @@ def season(df, marketDf, sma):
   }, index=(df.index)).dropna()
   ssDf["stock_sma"] = ssDf["stock_close"].rolling(window=sma, center=True).mean()
   ssDf["market_sma"] = ssDf["market_close"].rolling(window=sma, center=True).mean()
+  ssDf["stock_ret"] = ssDf["stock_sma"].pct_change()
+  ssDf["market_ret"] = ssDf["market_sma"].pct_change()
   ssDf = ssDf.dropna()
 
   model = sklearn.linear_model.LinearRegression()
-  model.fit(ssDf["market_sma"].values.reshape(-1, 1), ssDf["stock_sma"].values)
-  hsi = ssDf["stock_sma"] + model.predict(ssDf["market_sma"].values.reshape(-1, 1)) - ssDf["stock_sma"]
-  ssDf["residue"] = ssDf["stock_sma"] - model.predict(ssDf["market_sma"].values.reshape(-1, 1))
-  pr = ssDf["residue"].rolling(window=sma, center=True).mean()
-  rsr = pr.diff().rolling(window=sma, center=True).mean()
-  rsm = rsr.diff().rolling(window=sma, center=True).mean()
-  ssDf["deriv"] = ssDf["residue"].rolling(window=sma, center=True).mean()
-  ssDf["deriv"] = ssDf["deriv"].diff()
+  model.fit(ssDf["market_ret"].values.reshape(-1, 1), ssDf["stock_ret"].values)
+  ssDf["residue"] = ssDf["stock_ret"] - model.predict(ssDf["market_ret"].values.reshape(-1, 1))
+  rsr = ssDf["residue"].rolling(window=sma, center=True).mean()
+  rsm = pr.diff().rolling(window=sma, center=True).mean()
   ssX = []
   ssY = []
   grouped = ssDf.groupby(ssDf.index.to_period("Y"))
   for name, group in grouped:
     ssX.append(np.array([]))
-    ssY.append(np.array(group["deriv"].values))
+    ssY.append(np.array(group["residue"].values))
     grouped2 = group.groupby(group.index.to_period("M"))
     for name2, group2 in grouped2:
       ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.linspace(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, num=len(group2["deriv"].values), endpoint=False))
@@ -180,7 +178,7 @@ def season(df, marketDf, sma):
     f = interp1d(xVals, yVals, kind="linear", bounds_error=False, fill_value="extrapolate")
     gridVals.append(f(xGrid))
   meanSs = np.nanmean(gridVals, axis=0)
-  return ssX, ssY, xGrid, meanSs, rsr, rsm, hsi
+  return ssX, ssY, xGrid, meanSs, rsr, rsm
 
 obsTit = {
   "gc01": "Golden Cross", 
@@ -250,7 +248,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 obs += gdCross(df, futureDf)
 df["rsi14"] = rsi(df["Close"], 14)
-ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"], df["hsi"] = season(df, marketDf, 50)
+ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
 
 # clean data
 df = df.reset_index()
@@ -290,15 +288,6 @@ fig.add_trace(go.Candlestick(
   line_width=1,
   opacity=1,
   name='Raw Candlestick',
-  hoverinfo="none"
-), row=1, col=1)
-
-fig.add_trace(go.Scatter(
-  x=df["Date"], 
-  y=df["hsi"], 
-  mode="lines", 
-  name="HSI", 
-  line=dict(width=1.5, color="orange"), 
   hoverinfo="none"
 ), row=1, col=1)
 
