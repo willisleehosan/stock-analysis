@@ -592,6 +592,7 @@ def obsButClick(inp):
     st.session_state.obsPlot = list(obsPlot.keys()).index(obsPlotKey[inp])
   else:
     st.session_state.obsPlot = None
+  st.write(st.session_state.obsPlot)
 
 with c1: 
   st.plotly_chart(fig, use_container_width=True)
