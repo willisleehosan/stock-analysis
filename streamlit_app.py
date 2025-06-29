@@ -588,6 +588,7 @@ obsPlot["sma"].update_layout(
 # --------------------------------------------------
 
 def obsButClick(inp):
+  st.write(inp)
   if inp in obsPlotKey:
     st.session_state.obsPlot = obsPlotKey[inp]
   else:
