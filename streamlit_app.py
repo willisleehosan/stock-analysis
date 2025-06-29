@@ -159,7 +159,7 @@ def season(df, marketDf, sma):
   model.fit(ssDf["market_ret"].values.reshape(-1, 1), ssDf["stock_ret"].values)
   ssDf["residue"] = ssDf["stock_ret"] - model.predict(ssDf["market_ret"].values.reshape(-1, 1))
   rsr = ssDf["residue"].rolling(window=sma, center=True).mean()
-  rsm = rsr.diff()
+  rsm = rsr.diff().rolling(window=sma, center=True).mean()
   ssX = []
   ssY = []
   grouped = ssDf.groupby(ssDf.index.to_period("Y"))
@@ -175,7 +175,7 @@ def season(df, marketDf, sma):
   for xVals, yVals in zip(ssX, ssY):
     if len(xVals) < 2:
       continue
-    f = interp1d(xVals, yVals, kind="linear", bounds_error=False, fill_value="extrapolate")
+    f = interp1d(xVals, yVals, kind="linear", bounds_error=False)
     gridVals.append(f(xGrid))
   meanSs = np.nanmean(gridVals, axis=0)
   return ssX, ssY, xGrid, meanSs, rsr, rsm
