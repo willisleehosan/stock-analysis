@@ -518,12 +518,13 @@ obsPlot["sma"].add_trace(go.Candlestick(
   x=df['Date'],
   open=df['Open'], high=df['High'],
   low=df['Low'], close=df['Close'],
-  increasing_line_color='rgba(0,100,0,0.5)',  # light green
-  decreasing_line_color='rgba(100,0,0,0.5)',  # light red
-  increasing_fillcolor='rgba(0,100,0,0.5)',
-  decreasing_fillcolor='rgba(100,0,0,0.5)',
+  increasing_line_color='green',
+  decreasing_line_color='red',
+  increasing_fillcolor='rgba(0, 0, 0, 0)',
+  decreasing_fillcolor='rgba(0, 0, 0, 0)',
+  line_width=1,
   opacity=1,
-  name='Raw Candlestick', 
+  name='Raw Candlestick',
   hoverinfo="none"
 ), row=1, col=1)
 
