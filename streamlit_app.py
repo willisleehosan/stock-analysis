@@ -223,7 +223,7 @@ obsPlotName = {
 }
 # ----------------------------------------------
 obs = []
-st.session_state.obsPlot = None
+st.session_state["obsPlot"] = None
 
 ticker = st.text_input("Ticker", "0189") + ".HK"
 
@@ -589,10 +589,9 @@ obsPlot["sma"].update_layout(
 
 def obsButClick(inp):
   if inp in obsPlotKey:
-    st.session_state.obsPlot = list(obsPlot.keys()).index(obsPlotKey[inp])
+    st.session_state["obsPlot"] = list(obsPlot.keys()).index(obsPlotKey[inp])
   else:
-    st.session_state.obsPlot = None
-  st.write(st.session_state.obsPlot)
+    st.session_state["obsPlot"] = None
 
 with c1: 
   st.plotly_chart(fig, use_container_width=True)
@@ -625,11 +624,10 @@ with st.container():
           st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}", args=(obsKey,), on_click=obsButClick)
 
   with b2:
-    st.write(st.session_state.obsPlot)
     dropdown = st.selectbox(
       "Select Plot", 
       obsPlot.keys(), 
-      index=st.session_state.obsPlot, 
+      index=st.session_state["obsPlot"], 
       key="obs_dropdown", 
       format_func=lambda a: obsPlotName[a]
     )
