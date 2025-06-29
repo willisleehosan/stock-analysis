@@ -514,7 +514,7 @@ obsPlot["sma"] = make_subplots(rows=1, cols=1, shared_xaxes=True,
                        vertical_spacing=0.05, 
                        subplot_titles=[""])
 
-obsPlot.add_trace(go.Candlestick(
+obsPlot["sma"].add_trace(go.Candlestick(
   x=df['Date'],
   open=df['Open'], high=df['High'],
   low=df['Low'], close=df['Close'],
