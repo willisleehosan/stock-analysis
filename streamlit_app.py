@@ -618,7 +618,7 @@ obsPlot["rsi"].update_layout(
     dict(
       type="line", 
       xref="paper", 
-      yref="y", 
+      yref="y2", 
       x0=0, 
       x1=1, 
       y0=70, 
@@ -632,7 +632,7 @@ obsPlot["rsi"].update_layout(
     dict(
       type="line", 
       xref="paper", 
-      yref="y", 
+      yref="y2", 
       x0=0, 
       x1=1, 
       y0=50, 
@@ -646,7 +646,7 @@ obsPlot["rsi"].update_layout(
     dict(
       type="line", 
       xref="paper", 
-      yref="y", 
+      yref="y2", 
       x0=0, 
       x1=1, 
       y0=30, 
