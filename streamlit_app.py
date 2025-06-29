@@ -153,7 +153,6 @@ def rsiAn(df):
   rsiVals = df["rsi"].values
   indexVals = df.index.values
   while i < len(rsiVals):
-    st.write(i)
     if startD:
       if rsiVals[i] < 70:
         rsiObs.append(["rsiob", indexVals[startD], indexVals[i-1]])
@@ -167,7 +166,6 @@ def rsiAn(df):
   i = 0
   startD = None
   while i < len(rsiVals):
-    st.write(i)
     if startD:
       if rsiVals[i] > 30:
         rsiObs.append(["rsios", indexVals[startD], indexVals[i-1]])
