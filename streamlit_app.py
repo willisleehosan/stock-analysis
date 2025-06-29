@@ -287,7 +287,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 obs += gdCross(df, futureDf)
 df["rsi"] = rsi(df["Close"], 14)
-obs += rsiAns(df)
+obs += rsiAn(df)
 ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
 
 # clean data
