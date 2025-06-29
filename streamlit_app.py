@@ -589,7 +589,7 @@ obsPlot["sma"].update_layout(
 
 def obsButClick(inp):
   if inp in obsPlotKey:
-    st.session_state.obsPlot = obsPlotKey[inp]
+    st.session_state.obsPlot = obsPlot.keys().index(obsPlotKey[inp])
   else:
     st.session_state.obsPlot = None
 
@@ -627,7 +627,7 @@ with st.container():
     dropdown = st.selectbox(
       "Select Plot", 
       obsPlot.keys(), 
-      index="sma", 
+      index=st.session_state.obsPlot, 
       key="obs_dropdown", 
       format_func=lambda a: obsPlotName[a]
     )
