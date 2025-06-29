@@ -157,6 +157,7 @@ def season(df, marketDf, sma):
 
   model = sklearn.linear_model.LinearRegression()
   model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
+  hsi = model.predict(ssDf["market_pct"].values.reshape(-1, 1))
   ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
   pr = ssDf["residue"].rolling(window=sma, center=True).mean()
   rsr = pr.diff().rolling(window=sma, center=True).mean()
@@ -181,7 +182,7 @@ def season(df, marketDf, sma):
     f = interp1d(xVals, yVals, kind="linear", bounds_error=False, fill_value="extrapolate")
     gridVals.append(f(xGrid))
   meanSs = np.nanmean(gridVals, axis=0)
-  return ssX, ssY, xGrid, meanSs, rsr, rsm
+  return ssX, ssY, xGrid, meanSs, rsr, rsm, hsi
 
 obsTit = {
   "gc01": "Golden Cross", 
@@ -251,7 +252,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 obs += gdCross(df, futureDf)
 df["rsi14"] = rsi(df["Close"], 14)
-ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
+ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"], df["hsi"] = season(df, marketDf, 50)
 
 # clean data
 df = df.reset_index()
@@ -291,6 +292,15 @@ fig.add_trace(go.Candlestick(
   line_width=1,
   opacity=1,
   name='Raw Candlestick',
+  hoverinfo="none"
+), row=1, col=1)
+
+fig.add_trace(go.Scatter(
+  x=df["Date"], 
+  y=df["hsi"], 
+  mode="lines", 
+  name="HSI", 
+  line=dict(width=1.5, color="orange"), 
   hoverinfo="none"
 ), row=1, col=1)
 
