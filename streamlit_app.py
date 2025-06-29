@@ -159,8 +159,8 @@ def season(df, marketDf, sma):
   model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
   ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
   pr = ssDf["residue"].rolling(window=sma, center=True).mean()
-  rsr = pr.diff().rolling(window=sma, center=True).mean()
-  rsm = rsr.diff().rolling(window=sma, center=True).mean()
+  rsr = pr.diff()
+  rsm = rsr.rolling(window=sma, center=True).mean().diff()
   ssDf["deriv"] = ssDf["residue"].rolling(window=sma, center=True).mean()
   ssDf["deriv"] = ssDf["deriv"].diff()
   ssX = []
