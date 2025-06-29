@@ -664,7 +664,7 @@ obsPlot["rrg"] = make_subplots(rows=1, cols=1, shared_xaxes=True,
 
 obsPlot["rrg"].add_trace(go.Scatter(
   x=df["rsr"].iloc[-151:], 
-  y=df["rsm"].iloc[-151:], 
+  y=-df["rsm"].iloc[-151:], 
   mode="lines+markers", 
   name="Relative Rotation Trail", 
   text=df["Date"].iloc[-151:], 
