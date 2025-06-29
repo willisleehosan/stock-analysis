@@ -260,7 +260,7 @@ c1, c2 = st.columns(2)
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
                     subplot_titles=["", ""], 
-                   row-heights=[0.8, 0.2])
+                   row_heights=[0.8, 0.2])
 
 df = pd.concat([df, futureDf], ignore_index=True)
 fig.add_trace(go.Candlestick(
