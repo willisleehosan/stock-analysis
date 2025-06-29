@@ -588,11 +588,11 @@ obsPlot["sma"].update_layout(
 # --------------------------------------------------
 
 def obsButClick(inp):
-  st.write(inp)
   if inp in obsPlotKey:
     st.session_state.obsPlot = obsPlotKey[inp]
   else:
     st.session_state.obsPlot = None
+  st.write(st.session_state.obsPlot)
 
 with c1: 
   st.plotly_chart(fig, use_container_width=True)
