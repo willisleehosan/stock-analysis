@@ -168,7 +168,7 @@ def season(df, marketDf, sma):
     ssY.append(np.array(group["residue"].values))
     grouped2 = group.groupby(group.index.to_period("M"))
     for name2, group2 in grouped2:
-      ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.linspace(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, num=len(group2["deriv"].values), endpoint=False))
+      ssX[len(ssX)-1] = np.append(ssX[len(ssX)-1], np.linspace(int(str(name2).split("-")[1]), int(str(name2).split("-")[1])+1, num=len(group2["residue"].values), endpoint=False))
 
   xGrid = np.linspace(1, 13, num=365, endpoint=False)
   gridVals = []
