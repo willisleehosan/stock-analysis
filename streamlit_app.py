@@ -149,8 +149,8 @@ def rsiAn(df):
 
   # overbought
   startD = None
-  rsiVals = df["rsi"].values
-  indexVals = df.index.values
+  rsiVals = list(df["rsi"].values)
+  indexVals = list(df.index.values)
   for i in range(len(rsiVals)):
     if startD:
       if rsiVals[i] < 70:
