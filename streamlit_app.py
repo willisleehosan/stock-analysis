@@ -343,6 +343,7 @@ fig.update_layout(
     spikethickness=2
   ), 
   yaxis=dict(
+    range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
@@ -351,6 +352,7 @@ fig.update_layout(
     spikethickness=2
   ), 
   yaxis2=dict(
+    range=[0, 1.2*df["Volume"].iloc[-91:].max()],
     showticklabels=False, 
     ticks="", 
     showgrid=False, 
@@ -521,6 +523,7 @@ obsPlot["sma"].update_layout(
     spikethickness=2
   ),
   yaxis=dict(
+    range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
@@ -564,12 +567,17 @@ obsPlot["rsi"].update_layout(
     spikethickness=2
   ),
   yaxis=dict(
+    range=[0, 100],
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
     spikesnap='cursor',
     spikemode='across',
-    spikethickness=2
+    spikethickness=2,
+    showticklabels=False, 
+    ticks="", 
+    showgrid=False, 
+    zeroline=False
   ), 
   shapes=[
     dict(
