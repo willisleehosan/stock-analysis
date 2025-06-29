@@ -610,17 +610,18 @@ with st.container():
     st.markdown("---")
     with st.container(height=300):
       for i, item in enumerate(obs):
+        obsKey = item[0]
         startD = item[1].strftime("%d/%m/%Y")
         endD = item[2].strftime("%d/%m/%Y")
         with stylable_container(
           key=f"obs_container_{i}", 
           css_styles=f"""
             button {{
-              background-color: {"rgba(0, 255, 0, 0.3)" if obsBull[item[0]] else "rgba(255, 0, 0, 0.3)"}
+              background-color: {"rgba(0, 255, 0, 0.3)" if obsBull[obsKey] else "rgba(255, 0, 0, 0.3)"}
             }}
           """
         ):
-          st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}", args=(item[0]), on_click=obsButClick)
+          st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}", args=obsKey, on_click=obsButClick)
 
   with b2:
     dropdown = st.selectbox(
