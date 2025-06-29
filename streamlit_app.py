@@ -148,11 +148,10 @@ def rsiAn(df):
   rsiObs = []
 
   # overbought
-  i = 0
   startD = None
   rsiVals = df["rsi"].values
   indexVals = df.index.values
-  while i < len(rsiVals):
+  for i in range(len(rsiVals)):
     if startD:
       if rsiVals[i] < 70:
         rsiObs.append(["rsiob", indexVals[startD], indexVals[i-1]])
@@ -160,12 +159,10 @@ def rsiAn(df):
     else:
       if rsiVals[i] >= 70:
         startD = i
-    i += 1
 
   # oversold
-  i = 0
   startD = None
-  while i < len(rsiVals):
+  for i in range(len(rsiVals)):
     if startD:
       if rsiVals[i] > 30:
         rsiObs.append(["rsios", indexVals[startD], indexVals[i-1]])
@@ -173,7 +170,6 @@ def rsiAn(df):
       else:
         if rsiVals[i] <= 30:
           startD = i
-      i += 1
 
   return rsiObs
 
