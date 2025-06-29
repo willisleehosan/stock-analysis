@@ -625,7 +625,7 @@ with st.container():
     dropdown = st.selectbox(
       "Select Plot", 
       obsPlot.keys(), 
-      index=st.session_state["obsPlot"], 
+      index=0, 
       key="obs_dropdown", 
       format_func=lambda a: obsPlotName[a]
     )
