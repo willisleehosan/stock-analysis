@@ -667,7 +667,7 @@ obsPlot["rrg"].add_trace(go.Scatter(
   y=df["rsm"].iloc[-151:], 
   mode="lines+markers", 
   name="Relative Rotation Trail", 
-  text=df["Date"].iloc[-101:], 
+  text=df["Date"].iloc[-151:], 
   line_shape="spline"
 ), row=1, col=1)
 
