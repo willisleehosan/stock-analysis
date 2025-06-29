@@ -159,7 +159,7 @@ def season(df, marketDf, sma):
   model.fit(ssDf["market_ret"].values.reshape(-1, 1), ssDf["stock_ret"].values)
   ssDf["residue"] = ssDf["stock_ret"] - model.predict(ssDf["market_ret"].values.reshape(-1, 1))
   rsr = ssDf["residue"].rolling(window=sma, center=True).mean()
-  rsm = rsr.diff().rolling(window=sma, center=True).mean()
+  rsm = rsr.diff()
   ssX = []
   ssY = []
   grouped = ssDf.groupby(ssDf.index.to_period("Y"))
