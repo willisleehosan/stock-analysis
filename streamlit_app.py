@@ -620,7 +620,7 @@ with st.container():
             }}
           """
         ):
-          st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}", args=item[0], on_click=obsButClick)
+          st.button(f"{startD} ~ {endD} \n\n**{obsTit[item[0]]}** \n\n{obsDesc[item[0]]}", key=f"obs_button_{i}", args=(item[0]), on_click=obsButClick)
 
   with b2:
     dropdown = st.selectbox(
