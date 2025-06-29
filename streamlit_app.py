@@ -628,6 +628,8 @@ with st.container():
       key="obsPlot", 
       format_func=lambda a: obsPlotName[a]
     )
+    if dropdown != st.session_state.obsPlot:
+      st.session_state.obsPlot = dropdown
     
     if st.session_state.obsPlot in obsPlot:
       st.plotly_chart(obsPlot[st.session_state.obsPlot], use_container_width=True)
