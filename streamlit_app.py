@@ -598,6 +598,22 @@ st.markdown("---")
 with st.container():
   b1, b2 = st.columns([1, 2.5])
   
+  with b2:
+    dropdown = st.selectbox(
+      "Select Plot", 
+      obsPlot.keys(), 
+      index=None, 
+      key="obs_dropdown", 
+      format_func=lambda a: obsPlotName[a]
+    )
+    if dropdown != st.session_state.obsPlot:
+      st.session_state.obsPlot = dropdown
+    
+    if st.session_state.obsPlot in obsPlot:
+      st.plotly_chart(obsPlot[st.session_state.obsPlot], use_container_width=True)
+    else:
+      st.container(border=True, height=600).write("No available plots")
+  
   with b1: 
     obs.sort(reverse=True, key=lambda a: a[2])
     st.markdown("### Observations")
@@ -621,19 +637,3 @@ with st.container():
             else: 
               st.session_state.obsPlot = None
               dropdown.index = None
-
-  with b2:
-    dropdown = st.selectbox(
-      "Select Plot", 
-      obsPlot.keys(), 
-      index=None, 
-      key="obs_dropdown", 
-      format_func=lambda a: obsPlotName[a]
-    )
-    if dropdown != st.session_state.obsPlot:
-      st.session_state.obsPlot = dropdown
-    
-    if st.session_state.obsPlot in obsPlot:
-      st.plotly_chart(obsPlot[st.session_state.obsPlot], use_container_width=True)
-    else:
-      st.container(border=True, height=600).write("No available plots")
