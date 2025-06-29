@@ -151,14 +151,12 @@ def season(df, marketDf, sma):
   }, index=(df.index)).dropna()
   ssDf["stock_sma"] = ssDf["stock_close"].rolling(window=sma, center=True).mean()
   ssDf["market_sma"] = ssDf["market_close"].rolling(window=sma, center=True).mean()
-  ssDf["stock_pct"] = ssDf["stock_sma"].pct_change()
-  ssDf["market_pct"] = ssDf["market_sma"].pct_change()
   ssDf = ssDf.dropna()
 
   model = sklearn.linear_model.LinearRegression()
-  model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
-  hsi = ssDf["stock_pct"] + model.predict(ssDf["market_pct"].values.reshape(-1, 1)) - ssDf["stock_pct"]
-  ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
+  model.fit(ssDf["market_sma"].values.reshape(-1, 1), ssDf["stock_sma"].values)
+  hsi = ssDf["stock_sma"] + model.predict(ssDf["market_sma"].values.reshape(-1, 1)) - ssDf["stock_sma"]
+  ssDf["residue"] = ssDf["stock_sma"] - model.predict(ssDf["market_sma"].values.reshape(-1, 1))
   pr = ssDf["residue"].rolling(window=sma, center=True).mean()
   rsr = pr.diff().rolling(window=sma, center=True).mean()
   rsm = rsr.diff().rolling(window=sma, center=True).mean()
