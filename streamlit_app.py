@@ -592,7 +592,6 @@ def obsButClick(inp):
     st.session_state.obsPlot = list(obsPlot.keys()).index(obsPlotKey[inp])
   else:
     st.session_state.obsPlot = None
-  st.write(st.session_state.obsPlot)
 
 with c1: 
   st.plotly_chart(fig, use_container_width=True)
@@ -628,7 +627,7 @@ with st.container():
     dropdown = st.selectbox(
       "Select Plot", 
       obsPlot.keys(), 
-      index=st.session_state.obsPlot, 
+      index=0, 
       key="obs_dropdown", 
       format_func=lambda a: obsPlotName[a]
     )
