@@ -38,8 +38,8 @@ def alphabeta(df, marketDf):
     "stock_close": df["Close"],
     "market_close": marketDf["Close"]
   }, index=(df.index)).dropna()
-  abDf["stock_ret"] = abDf["stock_close"].pct_change()
-  abDf["market_ret"] = abDf["market_close"].pct_change()
+  abDf["stock_ret"] = np.log(abDf["stock_close"]).diff()
+  abDf["market_ret"] = np.log(abDf["market_close"]).diff()
   abDf = abDf.dropna()
   model = sklearn.linear_model.LinearRegression()
   model.fit(abDf["market_ret"].values.reshape(-1, 1), abDf["stock_ret"].values)
