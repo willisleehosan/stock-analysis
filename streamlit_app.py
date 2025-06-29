@@ -158,8 +158,8 @@ def season(df, marketDf, sma):
   model = sklearn.linear_model.LinearRegression()
   model.fit(ssDf["market_pct"].values.reshape(-1, 1), ssDf["stock_pct"].values)
   ssDf["residue"] = ssDf["stock_pct"] - model.predict(ssDf["market_pct"].values.reshape(-1, 1))
-  ssDf["rsr"] = ssDf["residue"].rolling(window=sma).mean()
-  ssDf["rsm"] = ssDf["rsr"].diff().rolling(window=sma).mean()
+  rsr = ssDf["residue"].rolling(window=sma).mean()
+  rsm = ssDf["rsr"].diff().rolling(window=sma).mean()
   ssDf["deriv"] = ssDf["residue"].rolling(window=sma, center=True).mean()
   ssDf["deriv"] = ssDf["deriv"].diff()
   ssX = []
@@ -180,7 +180,7 @@ def season(df, marketDf, sma):
     f = interp1d(xVals, yVals, kind="linear", bounds_error=False, fill_value="extrapolate")
     gridVals.append(f(xGrid))
   meanSs = np.nanmean(gridVals, axis=0)
-  return ssX, ssY, xGrid, meanSs, ssDf["rsr"], ssDf["rsm"]
+  return ssX, ssY, xGrid, meanSs, rsr, rsm
 
 obsTit = {
   "gc01": "Golden Cross", 
