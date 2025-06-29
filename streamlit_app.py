@@ -144,6 +144,37 @@ def rsi(arr, l):
     rsi.append(100 * uSmma[i] / (uSmma[i] + dSmma[i]))
   return rsi
 
+def rsiAn(df):
+  rsiObs = []
+
+  # overbought
+  i = 0
+  startD = None
+  while i < len(df["Close"].values):
+    if startD:
+      if df["rsi"] < 70:
+        rsiObs.append(["rsiob", df.index[startD], df.index[i-1]])
+        startD = None
+    else:
+      if df["rsi"] >= 70:
+        startD = i
+    i += 1
+
+  # oversold
+  i = 0
+  startD = None
+  while i < len(df["Close"].values):
+    if startD:
+      if df["rsi"] > 30:
+        rsiObs.append(["rsios", df.index[startD], df.index[i-1]])
+        startD = None
+      else:
+        if df["rsi"] <= 30:
+          startD = i
+      i += 1
+
+  return rsiObs
+
 def season(df, marketDf, sma):
   ssDf = pd.DataFrame({
     "stock_close": df["Close"], 
@@ -186,7 +217,9 @@ obsTit = {
   "gc12": "Golden Cross", 
   "dc01": "Death Cross", 
   "dc02": "Death Cross", 
-  "dc12": "Death Cross"
+  "dc12": "Death Cross", 
+  "rsiob": "RSI Overbought", 
+  "rsios": "RSI Oversold"
 }
 
 obsDesc = {
@@ -195,7 +228,9 @@ obsDesc = {
   "gc12": "50-D SMA > 100-D SMA", 
   "dc01": "20-D SMA < 50-D SMA", 
   "dc02": "20-D SMA < 100-D SMA", 
-  "dc12": "50-D SMA < 100-D SMA"
+  "dc12": "50-D SMA < 100-D SMA", 
+  "rsiob": "", 
+  "rsios": ""
 }
 
 obsBull = {
@@ -204,7 +239,9 @@ obsBull = {
   "gc12": True, 
   "dc01": False, 
   "dc02": False, 
-  "dc12": False
+  "dc12": False, 
+  "rsiob": False, 
+  "rsios": True
 }
 
 obsPlotKey = {
@@ -213,7 +250,9 @@ obsPlotKey = {
   "gc12": "sma", 
   "dc01": "sma", 
   "dc02": "sma", 
-  "dc12": "sma"
+  "dc12": "sma", 
+  "rsiob": "rsi", 
+  "rsios": "rsi"
 }
 
 obsPlot = {}
@@ -247,7 +286,8 @@ df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 obs += gdCross(df, futureDf)
-df["rsi14"] = rsi(df["Close"], 14)
+df["rsi"] = rsi(df["Close"], 14)
+obs += rsiAns(df)
 ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
 
 # clean data
@@ -551,7 +591,7 @@ obsPlot["rsi"].add_trace(go.Candlestick(
 
 obsPlot["rsi"].add_trace(go.Scatter(
   x=df["Date"], 
-  y=df["rsi14"], 
+  y=df["rsi"], 
   mode="lines", 
   name="14-D RSI", 
   line=dict(width=1.5, color="orange"),
