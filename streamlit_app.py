@@ -587,12 +587,6 @@ obsPlot["sma"].update_layout(
 
 # --------------------------------------------------
 
-def obsButClick(inp):
-  if inp in obsPlotKey:
-    st.session_state["obsPlot"] = list(obsPlot.keys()).index(obsPlotKey[inp])
-  else:
-    st.session_state["obsPlot"] = None
-
 with c1: 
   st.plotly_chart(fig, use_container_width=True)
 
@@ -621,7 +615,9 @@ with st.container():
             }}
           """
         ):
-          st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}", args=(obsKey,), on_click=obsButClick)
+          if st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}"):
+            if item[0] in obsPlotKey:
+              st.session_state["obsPlot"] = list(obsPlot.keys()).index(obsPlotKey[obsKey])
 
   with b2:
     dropdown = st.selectbox(
