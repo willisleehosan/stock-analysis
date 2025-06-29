@@ -618,8 +618,10 @@ with st.container():
           if st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}"):
             if item[0] in obsPlotKey:
               st.session_state["obsPlot"] = list(obsPlot.keys()).index(obsPlotKey[obsKey])
+              st.write(st.session_state["obsPlot"])
 
   with b2:
+    st.write(st.session_state["obsPlot"]
     dropdown = st.selectbox(
       "Select Plot", 
       obsPlot.keys(), 
