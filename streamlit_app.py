@@ -219,11 +219,11 @@ obsPlotKey = {
 obsPlot = {}
 
 obsPlotName = {
-  "sma": "Simple Moving Average Ribbon"
+  "sma": "Simple Moving Average Ribbon", 
+  "rsi": "Relative Strength Index"
 }
 # ----------------------------------------------
 obs = []
-st.session_state["obsPlot"] = None
 
 ticker = st.text_input("Ticker", "0189") + ".HK"
 
@@ -247,7 +247,6 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 obs += gdCross(df, futureDf)
 df["rsi14"] = rsi(df["Close"], 14)
-df["rsi9"] = rsi(df["Close"], 9)
 ssX, ssY, meanSsX, meanSsY = season(df, marketDf, 50)
 
 # clean data
@@ -302,29 +301,18 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     hoverinfo="none"
   ), row=1, col=1)
 
-fig.add_trace(go.Scatter(
+fig.add_trace(go.Bar(
   x=df["Date"], 
-  y=df["rsi14"], 
-  mode="lines", 
-  name="14-D RSI", 
-  line=dict(width=1.5, color="cyan"),
-  hoverinfo="none"
-), row=2, col=1)
-
-fig.add_trace(go.Scatter(
-  x=df["Date"], 
-  y=df["rsi9"], 
-  mode="lines", 
-  name="9-D RSI", 
-  line=dict(width=1.5, color="orange"), 
-  hoverinfo="none"
+  y=df["Volume"], 
+  marker_color=["green" if close >= open_ else "red" for open_, close in zip(df["Open"], df["Close"])], 
+  name="Volume"
 ), row=2, col=1)
 
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   yaxis1_title="Price",
-  yaxis2_title="RSI", 
+  yaxis2_title="Volume", 
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
@@ -366,51 +354,7 @@ fig.update_layout(
     ticks="", 
     showgrid=False, 
     zeroline=False
-  ), 
-  shapes=[
-    dict(
-      type="line", 
-      xref="paper", 
-      yref="y2", 
-      x0=0, 
-      x1=1, 
-      y0=70, 
-      y1=70, 
-      line=dict(
-        color="green", 
-        width=2
-      ), 
-      layer="below"
-    ), 
-    dict(
-      type="line", 
-      xref="paper", 
-      yref="y2", 
-      x0=0, 
-      x1=1, 
-      y0=50, 
-      y1=50, 
-      line=dict(
-        color="cyan", 
-        width=2
-      ), 
-      layer="below"
-    ), 
-    dict(
-      type="line", 
-      xref="paper", 
-      yref="y2", 
-      x0=0, 
-      x1=1, 
-      y0=30, 
-      y1=30, 
-      line=dict(
-        color="red", 
-        width=2
-      ), 
-      layer="below"
-    )
-  ]
+  )
 )
 
 marketSsFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
@@ -585,6 +529,93 @@ obsPlot["sma"].update_layout(
   )
 )
 
+obsPlot["rsi"] = make_subplots(rows=1, cols=1, shared_xaxes=True, 
+                       vertical_spacing=0.05, 
+                       subplot_titles=[""])
+
+obsPlot["rsi"].add_trace(go.Scatter(
+  x=df["Date"], 
+  y=df["rsi14"], 
+  mode="lines", 
+  name="14-D RSI", 
+  line=dict(width=1.5, color="cyan"),
+  hoverinfo="none"
+), row=1, col=1)
+
+obsPlot["rsi"].update_layout(
+  title="SMA plot",
+  yaxis_title="Price",
+  height=600,
+  xaxis_rangeslider_visible=False,
+  hovermode="x unified",
+  spikedistance=-1,
+  xaxis=dict(
+    type='category',
+    categoryorder='array',
+    categoryarray=df["Date"].tolist(),
+    range=[len(df)-91, len(df)-1],
+    autorange=False,
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  ),
+  yaxis=dict(
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
+  ), 
+  shapes=[
+    dict(
+      type="line", 
+      xref="paper", 
+      yref="y2", 
+      x0=0, 
+      x1=1, 
+      y0=70, 
+      y1=70, 
+      line=dict(
+        color="green", 
+        width=2
+      ), 
+      layer="below"
+    ), 
+    dict(
+      type="line", 
+      xref="paper", 
+      yref="y2", 
+      x0=0, 
+      x1=1, 
+      y0=50, 
+      y1=50, 
+      line=dict(
+        color="cyan", 
+        width=2
+      ), 
+      layer="below"
+    ), 
+    dict(
+      type="line", 
+      xref="paper", 
+      yref="y2", 
+      x0=0, 
+      x1=1, 
+      y0=30, 
+      y1=30, 
+      line=dict(
+        color="red", 
+        width=2
+      ), 
+      layer="below"
+    )
+  ]
+)
+
 # --------------------------------------------------
 
 with c1: 
@@ -618,7 +649,6 @@ with st.container():
           if st.button(f"{startD} ~ {endD} \n\n**{obsTit[obsKey]}** \n\n{obsDesc[obsKey]}", key=f"obs_button_{i}"):
             if obsKey in obsPlotKey:
               st.session_state["obs_dropdown"] = obsPlotKey[obsKey]
-              st.write(st.session_state["obs_dropdown"])
 
   with b2:
     dropdown = st.selectbox(
