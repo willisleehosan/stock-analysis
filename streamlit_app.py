@@ -589,7 +589,7 @@ obsPlot["sma"].update_layout(
 
 def obsButClick(inp):
   if inp in obsPlotKey:
-    st.session_state.obsPlot = obsPlot.keys().index(obsPlotKey[inp])
+    st.session_state.obsPlot = list(obsPlot.keys()).index(obsPlotKey[inp])
   else:
     st.session_state.obsPlot = None
 
