@@ -259,7 +259,8 @@ c1, c2 = st.columns(2)
 # basic plot
 fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
                     vertical_spacing=0.05,
-                    subplot_titles=["", ""])
+                    subplot_titles=["", ""], 
+                   row-heights=[0.8, 0.2])
 
 df = pd.concat([df, futureDf], ignore_index=True)
 fig.add_trace(go.Candlestick(
@@ -543,8 +544,8 @@ obsPlot["rsi"].add_trace(go.Scatter(
 ), row=1, col=1)
 
 obsPlot["rsi"].update_layout(
-  title="SMA plot",
-  yaxis_title="Price",
+  title="RSI plot",
+  yaxis_title="RSI",
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
@@ -574,7 +575,7 @@ obsPlot["rsi"].update_layout(
     dict(
       type="line", 
       xref="paper", 
-      yref="y2", 
+      yref="y", 
       x0=0, 
       x1=1, 
       y0=70, 
@@ -588,7 +589,7 @@ obsPlot["rsi"].update_layout(
     dict(
       type="line", 
       xref="paper", 
-      yref="y2", 
+      yref="y", 
       x0=0, 
       x1=1, 
       y0=50, 
@@ -602,7 +603,7 @@ obsPlot["rsi"].update_layout(
     dict(
       type="line", 
       xref="paper", 
-      yref="y2", 
+      yref="y", 
       x0=0, 
       x1=1, 
       y0=30, 
