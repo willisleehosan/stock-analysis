@@ -112,19 +112,43 @@ def gdCross(df, futureDf):
 
   return smac
 
-def zigzag(df, dfs):  
-  zzPwlfHi = pwlf.PiecewiseLinFit(np.arange(0, len(dfs)), np.array(dfs["High"]))
-  zzPwlfLo = pwlf.PiecewiseLinFit(np.arange(0, len(dfs)), np.array(dfs["Low"]))
-  resHi = zzPwlfHi.fitfast(20)
-  resLo = zzPwlfLo.fitfast(20)
+def zigzag(df):  
+  troughs = []
+  peaks = []
+  dates = df.index.to_pydatetime()
+  highs = df["High"].values
+  lows = df["Low"].values
+  closes = df["Close"].values
 
-  xHat = []
-  for d in df.index.to_pydatetime()[(bisect.bisect_right(df.index.to_pydatetime(), dfs.index.to_pydatetime()[0])-1):]:
-    xHat.append(bisect.bisect_left(dfs.index.to_pydatetime(), d))
-    
-  yHatHi = zzPwlfHi.predict(np.array(xHat))
-  yHatLo = zzPwlfLo.predict(np.array(xHat))
-  return yHatHi, yHatLo
+  seekHi = True
+  ext = highs[0]
+  thres = low[0]
+  cand = 0
+  for i in range(1, len(closes)):
+    if seekHi:
+      if highs[i] > ext:
+        ext = highs[i]
+        thres = lows[i]
+        cand = i
+      elif closes[i] < thres:
+        peaks.append([dates[i], ext])
+        seekHi = False
+        ext = lows[i]
+        thres = highs[i]
+        cand = i
+    else:
+      if lows[i] < ext:
+        ext = lows[i]
+        thres = highs[i]
+        cand = i
+      elif closes[i] > thres:
+        troughs.append([dates[i], ext])
+        seekHi = True
+        ext = highs[i]
+        thres = lows[i]
+        cand = i
+
+  return peaks, troughs
 
 def rsi(arr, l):
   u = [float("nan")]
@@ -283,8 +307,10 @@ df["20SMA"] = df["Close"].rolling(window=20).mean()
 df["50SMA"] = df["Close"].rolling(window=50).mean()
 df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
-obs += gdCross(df, futureDf)
 df["rsi"] = rsi(df["Close"], 14)
+peaks, troughs = zigzag(df)
+zz = np.array((peaks + troughs).sort(key=lambda a: a[0])).transpose()
+obs += gdCross(df, futureDf)
 obs += rsiAn(df)
 ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
 
@@ -340,6 +366,15 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     visible=visibility, 
     hoverinfo="none"
   ), row=1, col=1)
+
+fig.add_trace(go.Scatter(
+  x=zz[0], 
+  y=zz[1], 
+  mode="lines", 
+  name="Zig zag", 
+  line=dict(width=1.5, color="orange"), 
+  hoverinfo="none"
+), row=1, col=1)
 
 fig.add_trace(go.Bar(
   x=df["Date"], 
