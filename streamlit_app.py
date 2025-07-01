@@ -131,7 +131,7 @@ def zigzag(df):
         thres = lows[i]
         cand = i
       elif closes[i] < thres:
-        peaks.append([dates[i], ext])
+        peaks.append([dates[cand], ext])
         seekHi = False
         ext = lows[i]
         thres = highs[i]
@@ -142,7 +142,7 @@ def zigzag(df):
         thres = highs[i]
         cand = i
       elif closes[i] > thres:
-        troughs.append([dates[i], ext])
+        troughs.append([dates[cand], ext])
         seekHi = True
         ext = highs[i]
         thres = lows[i]
