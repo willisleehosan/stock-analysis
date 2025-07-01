@@ -212,8 +212,8 @@ def rsiAn(df, peaks, troughs):
   # bull div
   for i in range(1, len(troughs)):
     if troughs[i][1] < troughs[i-1][1]:
-      id0 = np.where(indexVals == troughs[i-1][0])
-      id1 = np.where(indexVals == troughs[i][0])
+      id0 = int(np.where(indexVals == troughs[i-1][0])[0])
+      id1 = int(np.where(indexVals == troughs[i][0])[0])
       rsi0 = np.min(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)])
       if rsi0 == rsiVals[max(0, id0-3)] or rsi0 == rsiVals[max(len(troughs)-1, id1+3)]:
         continue
