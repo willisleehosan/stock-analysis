@@ -122,7 +122,7 @@ def zigzag(df):
 
   seekHi = True
   ext = highs[0]
-  thres = low[0]
+  thres = lows[0]
   cand = 0
   for i in range(1, len(closes)):
     if seekHi:
