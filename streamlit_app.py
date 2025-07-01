@@ -168,7 +168,7 @@ def rsi(arr, l):
     rsi.append(100 * uSmma[i] / (uSmma[i] + dSmma[i]))
   return rsi
 
-def rsiAn(df):
+def rsiAn(df, peaks, troughs):
   rsiObs = []
   rsiVals = df["rsi"].values
   indexVals = df.index.to_pydatetime()
@@ -194,6 +194,34 @@ def rsiAn(df):
     else:
       if rsiVals[i] <= 30:
         startD = i
+
+  # bear div
+  for i in range(1, len(peaks)):
+    if peaks[i][1] > peaks[i-1][1]:
+      id0 = np.where(indexVals == peaks[i-1][0])
+      id1 = np.where(indexVals == peaks[i][0])
+      rsi0 = np.max(rsiVals[max(0, id0-3):min(len(peaks), id0+4)])
+      if rsi0 == rsiVals[max(0, id0-3)] or rsi0 == rsiVals[max(len(peaks)-1, id1+3)]:
+        continue
+      rsi1 = np.max(rsiVals[max(0, id1-3):min(len(peaks), id1+4)])
+      if rsi1 == rsiVals[max(0, id1-3)] or rsi1 == rsiVals[max(len(peaks)-1, id1+3)]:
+        continue
+      if rsi0 > rsi1:
+        rsiObs.append(["rsibd", peaks[i-1][0], peaks[i][0]])
+        
+  # bull div
+  for i in range(1, len(troughs)):
+    if troughs[i][1] < troughs[i-1][1]:
+      id0 = np.where(indexVals == troughs[i-1][0])
+      id1 = np.where(indexVals == troughs[i][0])
+      rsi0 = np.min(rsiVals[max(0, id0-3):min(len(troughs), id0+4)])
+      if rsi0 == rsiVals[max(0, id0-3)] or rsi0 == rsiVals[max(len(troughs)-1, id1+3)]:
+        continue
+      rsi1 = np.min(rsiVals[max(0, id1-3):min(len(troughs), id1+4)])
+      if rsi1 == rsiVals[max(0, id1-3)] or rsi1 == rsiVals[max(len(troughs)-1, id1+3)]:
+        continue
+      if rsi0 < rsi1:
+        rsiObs.append(["rsiwd", troughs[i-1][0], troughs[i][0]])
 
   return rsiObs
 
@@ -241,7 +269,9 @@ obsTit = {
   "dc02": "Death Cross", 
   "dc12": "Death Cross", 
   "rsiob": "RSI Overbought", 
-  "rsios": "RSI Oversold"
+  "rsios": "RSI Oversold", 
+  "rsibd": "RSI Bearish Divergence", 
+  "rsiwd": "RSI Bullish Divergence"
 }
 
 obsDesc = {
@@ -252,7 +282,9 @@ obsDesc = {
   "dc02": "20-D SMA < 100-D SMA", 
   "dc12": "50-D SMA < 100-D SMA", 
   "rsiob": "", 
-  "rsios": ""
+  "rsios": "", 
+  "rsibd": "", 
+  "rsiwd": ""
 }
 
 obsBull = {
@@ -263,7 +295,9 @@ obsBull = {
   "dc02": False, 
   "dc12": False, 
   "rsiob": False, 
-  "rsios": True
+  "rsios": True, 
+  "rsibd": False, 
+  "rsiwd": True
 }
 
 obsPlotKey = {
@@ -274,7 +308,9 @@ obsPlotKey = {
   "dc02": "sma", 
   "dc12": "sma", 
   "rsiob": "rsi", 
-  "rsios": "rsi"
+  "rsios": "rsi", 
+  "rsibd": "rsi", 
+  "rsiwd": "rsi"
 }
 
 obsPlot = {}
@@ -309,12 +345,8 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 df["rsi"] = rsi(df["Close"], 14)
 peaks, troughs = zigzag(df)
-zz = (peaks + troughs)
-zz.sort(key=lambda a: a[0])
-zz = np.array(zz).transpose()
-zz[0] = np.array([d.strftime("%Y-%m-%d") for d in zz[0]])
 obs += gdCross(df, futureDf)
-obs += rsiAn(df)
+obs += rsiAn(df, peaks, troughs)
 ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
 
 # clean data
