@@ -212,13 +212,13 @@ def rsiAn(df, peaks, troughs):
   # bull div
   for i in range(1, len(troughs)):
     if troughs[i][1] < troughs[i-1][1]:
-      id0 = peaks[i-1][0]
-      id1 = peaks[i][0]
+      id0 = troughs[i-1][0]
+      id1 = troughs[i][0]
       rsi0 = int(np.argmin(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)]) + max(0, id0-3))
-      if rsi0 == max(0, id0-3) or rsi0 == max(len(troughs)-1, id1+3):
+      if rsi0 == max(0, id0-3) or rsi0 == min(len(troughs)-1, id1+3):
         continue
       rsi1 = int(np.argmin(rsiVals[max(0, id1-3):min(len(rsiVals), id1+4)]) + max(0, id1-3))
-      if rsi1 == max(0, id0-3) or rsi1 == max(len(troughs)-1, id1+3):
+      if rsi1 == max(0, id0-3) or rsi1 == min(len(troughs)-1, id1+3):
         continue
       if rsiVals[rsi0] < rsiVals[rsi1]:
         rsiObs.append(["rsiwd", id0, id1, rsi0, rsi1])
