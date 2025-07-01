@@ -402,15 +402,6 @@ for sma_label in ["10SMA", "20SMA", "50SMA", "100SMA"]:
     hoverinfo="none"
   ), row=1, col=1)
 
-fig.add_trace(go.Scatter(
-  x=zz[0], 
-  y=zz[1], 
-  mode="lines", 
-  name="Zig zag", 
-  line=dict(width=1.5, color="orange"), 
-  hoverinfo="none"
-), row=1, col=1)
-
 fig.add_trace(go.Bar(
   x=df["Date"], 
   y=df["Volume"], 
