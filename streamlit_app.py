@@ -200,6 +200,8 @@ def rsiAn(df, peaks, troughs):
     if peaks[i][1] > peaks[i-1][1]:
       id0 = int(np.where(indexVals == peaks[i-1][0])[0])
       id1 = int(np.where(indexVals == peaks[i][0])[0])
+      st.write(max(0, id0-3))
+      st.write(min(len(peaks), id0+4))
       rsi0 = np.max(rsiVals[max(0, id0-3):min(len(peaks), id0+4)])
       if rsi0 == rsiVals[max(0, id0-3)] or rsi0 == rsiVals[max(len(peaks)-1, id1+3)]:
         continue
