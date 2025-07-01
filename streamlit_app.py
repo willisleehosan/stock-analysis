@@ -106,9 +106,9 @@ def gdCross(df, futureDf):
   for i in range(1, len(smaEx)):
     for (shortSMA, longSMA) in [(0, 1), (0, 2), (1, 2)]:
       if (smaEx[smaTag[shortSMA]].iloc[i-1] <= smaEx[smaTag[longSMA]].iloc[i-1]) and (smaEx[smaTag[shortSMA]].iloc[i] > smaEx[smaTag[longSMA]].iloc[i]):
-        smac.append([f"gc{shortSMA}{longSMA}", smaEx.index[i-1], smaEx.index[i]])
+        smac.append([f"gc{shortSMA}{longSMA}", i-1, i])
       elif (smaEx[smaTag[shortSMA]].iloc[i-1] >= smaEx[smaTag[longSMA]].iloc[i-1]) and (smaEx[smaTag[shortSMA]].iloc[i] < smaEx[smaTag[longSMA]].iloc[i]):
-        smac.append([f"dc{shortSMA}{longSMA}", smaEx.index[i-1], smaEx.index[i]])
+        smac.append([f"dc{shortSMA}{longSMA}", i-1, i])
 
   return smac
 
@@ -131,7 +131,7 @@ def zigzag(df):
         thres = lows[i]
         cand = i
       elif closes[i] < thres:
-        peaks.append([dates[cand], ext])
+        peaks.append([cand, ext])
         seekHi = False
         ext = lows[i]
         thres = highs[i]
@@ -142,7 +142,7 @@ def zigzag(df):
         thres = highs[i]
         cand = i
       elif closes[i] > thres:
-        troughs.append([dates[cand], ext])
+        troughs.append([cand, ext])
         seekHi = True
         ext = highs[i]
         thres = lows[i]
@@ -178,7 +178,7 @@ def rsiAn(df, peaks, troughs):
   for i in range(len(rsiVals)):
     if startD:
       if rsiVals[i] < 70:
-        rsiObs.append(["rsiob", indexVals[startD], indexVals[i-1]])
+        rsiObs.append(["rsiob", startD, i-1])
         startD = None
     else:
       if rsiVals[i] >= 70:
@@ -189,7 +189,7 @@ def rsiAn(df, peaks, troughs):
   for i in range(len(rsiVals)):
     if startD:
       if rsiVals[i] > 30:
-        rsiObs.append(["rsios", indexVals[startD], indexVals[i-1]])
+        rsiObs.append(["rsios", startD, i-1])
         startD = None
     else:
       if rsiVals[i] <= 30:
@@ -198,30 +198,30 @@ def rsiAn(df, peaks, troughs):
   # bear div
   for i in range(1, len(peaks)):
     if peaks[i][1] > peaks[i-1][1]:
-      id0 = int(np.where(indexVals == peaks[i-1][0])[0])
-      id1 = int(np.where(indexVals == peaks[i][0])[0])
-      rsi0 = np.max(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)])
-      if rsi0 == rsiVals[max(0, id0-3)] or rsi0 == rsiVals[max(len(peaks)-1, id1+3)]:
+      id0 = peaks[i-1][0]
+      id1 = peaks[i][0]
+      rsi0 = int(np.argmax(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)]) + max(0, id0-3))
+      if rsi0 == max(0, id0-3) or rsi0 == min(len(rsiVals)-1, id0+3):
         continue
-      rsi1 = np.max(rsiVals[max(0, id1-3):min(len(rsiVals), id1+4)])
-      if rsi1 == rsiVals[max(0, id1-3)] or rsi1 == rsiVals[max(len(peaks)-1, id1+3)]:
+      rsi1 = int(np.argmax(rsiVals[max(0, id1-3):min(len(rsiVals), id1+4)]) + max(0, id1-3))
+      if rsi1 == max(0, id1-3) or rsi1 == min(len(rsiVals)-1, id0+3):
         continue
-      if rsi0 > rsi1:
-        rsiObs.append(["rsibd", peaks[i-1][0], peaks[i][0]])
+      if rsiVals[rsi0] > rsiVals[rsi1]:
+        rsiObs.append(["rsibd", id0, id1, rsi0, rsi1])
         
   # bull div
   for i in range(1, len(troughs)):
     if troughs[i][1] < troughs[i-1][1]:
-      id0 = int(np.where(indexVals == troughs[i-1][0])[0])
-      id1 = int(np.where(indexVals == troughs[i][0])[0])
-      rsi0 = np.min(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)])
-      if rsi0 == rsiVals[max(0, id0-3)] or rsi0 == rsiVals[max(len(troughs)-1, id1+3)]:
+      id0 = peaks[i-1][0]
+      id1 = peaks[i][0]
+      rsi0 = int(np.argmin(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)]) + max(0, id0-3))
+      if rsi0 == max(0, id0-3) or rsi0 == max(len(troughs)-1, id1+3):
         continue
-      rsi1 = np.min(rsiVals[max(0, id1-3):min(len(rsiVals), id1+4)])
-      if rsi1 == rsiVals[max(0, id1-3)] or rsi1 == rsiVals[max(len(troughs)-1, id1+3)]:
+      rsi1 = int(np.argmin(rsiVals[max(0, id1-3):min(len(rsiVals), id1+4)]) + max(0, id1-3))
+      if rsi1 == max(0, id0-3) or rsi1 == max(len(troughs)-1, id1+3):
         continue
-      if rsi0 < rsi1:
-        rsiObs.append(["rsiwd", troughs[i-1][0], troughs[i][0]])
+      if rsiVals[rsi0] < rsiVals[rsi1]:
+        rsiObs.append(["rsiwd", id0, id1, rsi0, rsi1])
 
   return rsiObs
 
@@ -634,7 +634,7 @@ obsPlot["sma"].update_layout(
 obsPlot["rsi"] = make_subplots(rows=2, cols=1, shared_xaxes=True, 
                                vertical_spacing=0.05, 
                                subplot_titles=["", ""], 
-                               row_heights=[0.7, 0.3])
+                               row_heights=[0.6, 0.4])
 
 obsPlot["rsi"].add_trace(go.Candlestick(
   x=df['Date'],
@@ -653,7 +653,7 @@ obsPlot["rsi"].add_trace(go.Scatter(
   y=df["rsi"], 
   mode="lines", 
   name="14-D RSI", 
-  line=dict(width=1.5, color="orange"),
+  line=dict(width=1.5, color="white"),
   hoverinfo="none"
 ), row=2, col=1)
 
@@ -722,7 +722,7 @@ obsPlot["rsi"].update_layout(
       y1=70, 
       line=dict(
         color="green", 
-        width=2
+        width=1
       ), 
       layer="below"
     ), 
@@ -736,7 +736,7 @@ obsPlot["rsi"].update_layout(
       y1=50, 
       line=dict(
         color="cyan", 
-        width=2
+        width=1
       ), 
       layer="below"
     ), 
@@ -750,7 +750,7 @@ obsPlot["rsi"].update_layout(
       y1=30, 
       line=dict(
         color="red", 
-        width=2
+        width=1
       ), 
       layer="below"
     )
@@ -783,6 +783,68 @@ obsPlot["rrg"].update_layout(
   )
 )
 
+for ob in obs:
+  if ob[0] == "rsibd":
+    obsPlot["rsi"].add_shape(
+      type="line", 
+      xref="x", 
+      yref="y1", 
+      x0=df["Date"][ob[1]],
+      y0=df["High"][ob[1]],
+      x1=df["Date"][ob[2]], 
+      y1=df["High"][ob[2]], 
+      line=dict(
+        color="yellow", 
+        width=1
+      ),
+      layer="below"
+    )
+    
+    obsPlot["rsi"].add_shape(
+      type="line", 
+      xref="x", 
+      yref="y2", 
+      x0=df["Date"][ob[3]],
+      y0=df["rsi"][ob[3]],
+      x1=df["Date"][ob[4]], 
+      y1=df["rsi"][ob[4]], 
+      line=dict(
+        color="yellow", 
+        width=1
+      ),
+      layer="below"
+    )
+  elif ob[0] == "rsiwd":
+    obsPlot["rsi"].add_shape(
+      type="line", 
+      xref="x", 
+      yref="y1", 
+      x0=df["Date"][ob[1]],
+      y0=df["Low"][ob[1]],
+      x1=df["Date"][ob[2]], 
+      y1=df["Low"][ob[2]], 
+      line=dict(
+        color="yellow", 
+        width=1
+      ),
+      layer="below"
+    )
+    
+    obsPlot["rsi"].add_shape(
+      type="line", 
+      xref="x", 
+      yref="y2", 
+      x0=df["Date"][ob[3]],
+      y0=df["rsi"][ob[3]],
+      x1=df["Date"][ob[4]], 
+      y1=df["rsi"][ob[4]], 
+      line=dict(
+        color="yellow", 
+        width=1
+      ),
+      layer="below"
+    )
+
 # --------------------------------------------------
 
 with c1: 
@@ -803,8 +865,8 @@ with st.container():
     with st.container(height=300):
       for i, item in enumerate(obs):
         obsKey = item[0]
-        startD = item[1].strftime("%d/%m/%Y")
-        endD = item[2].strftime("%d/%m/%Y")
+        startD = df["Date"].iloc[item[1]]
+        endD = df["Date"].iloc[item[2]]
         with stylable_container(
           key=f"obs_container_{i}", 
           css_styles=f"""
