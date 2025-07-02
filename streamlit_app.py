@@ -195,35 +195,40 @@ def rsiAn(df, peaks, troughs):
       if rsiVals[i] <= 30:
         startD = i
 
+  return rsiObs
+
+def divDet(ind, peaks, troughs, bull, bear):
+  divObs = []
+  
   # bear div
   for i in range(1, len(peaks)):
     if peaks[i][1] > peaks[i-1][1]:
       id0 = peaks[i-1][0]
       id1 = peaks[i][0]
-      rsi0 = int(np.argmax(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)]) + max(0, id0-3))
-      if rsi0 == max(0, id0-3) or rsi0 == min(len(rsiVals)-1, id0+3):
+      ind0 = int(np.argmax(ind[max(0, id0-3):min(len(ind), id0+4)]) + max(0, id0-3))
+      if ind0 == max(0, id0-3) or ind0 == min(len(ind)-1, id0+3):
         continue
-      rsi1 = int(np.argmax(rsiVals[max(0, id1-3):min(len(rsiVals), id1+4)]) + max(0, id1-3))
-      if rsi1 == max(0, id1-3) or rsi1 == min(len(rsiVals)-1, id0+3):
+      ind1 = int(np.argmax(ind[max(0, id1-3):min(len(ind), id1+4)]) + max(0, id1-3))
+      if ind1 == max(0, id1-3) or ind1 == min(len(ind)-1, id0+3):
         continue
-      if rsiVals[rsi0] > rsiVals[rsi1]:
-        rsiObs.append(["rsibd", id0, id1, rsi0, rsi1])
+      if ind[ind0] > ind[ind1]:
+        divObs.append([bear, id0, id1, ind0, ind1])
         
   # bull div
   for i in range(1, len(troughs)):
     if troughs[i][1] < troughs[i-1][1]:
       id0 = troughs[i-1][0]
       id1 = troughs[i][0]
-      rsi0 = int(np.argmin(rsiVals[max(0, id0-3):min(len(rsiVals), id0+4)]) + max(0, id0-3))
-      if rsi0 == max(0, id0-3) or rsi0 == min(len(troughs)-1, id1+3):
+      ind0 = int(np.argmin(ind[max(0, id0-3):min(len(ind), id0+4)]) + max(0, id0-3))
+      if ind0 == max(0, id0-3) or ind0 == min(len(troughs)-1, id1+3):
         continue
-      rsi1 = int(np.argmin(rsiVals[max(0, id1-3):min(len(rsiVals), id1+4)]) + max(0, id1-3))
-      if rsi1 == max(0, id0-3) or rsi1 == min(len(troughs)-1, id1+3):
+      ind1 = int(np.argmin(ind[max(0, id1-3):min(len(ind), id1+4)]) + max(0, id1-3))
+      if ind1 == max(0, id0-3) or ind1 == min(len(troughs)-1, id1+3):
         continue
-      if rsiVals[rsi0] < rsiVals[rsi1]:
-        rsiObs.append(["rsiwd", id0, id1, rsi0, rsi1])
+      if ind[ind0] < ind[ind1]:
+        divObs.append([bull, id0, id1, ind0, ind1])
 
-  return rsiObs
+  return divObs
 
 def season(df, marketDf, sma):
   ssDf = pd.DataFrame({
@@ -347,6 +352,7 @@ df["rsi"] = rsi(df["Close"], 14)
 peaks, troughs = zigzag(df)
 obs += gdCross(df, futureDf)
 obs += rsiAn(df, peaks, troughs)
+obs += divDet(df["rsi"].values, peaks, troughs, "rsiwd", "rsibd")
 ssX, ssY, meanSsX, meanSsY, df["rsm"], df["rsr"] = season(df, marketDf, 50)
 
 # clean data
