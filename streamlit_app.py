@@ -386,7 +386,7 @@ df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 c1, c2 = st.columns(2)
 
 # basic plot
-fig = make_subplots(rows=2, cols=2, shared_xaxes=True,
+fig = make_subplots(rows=2, cols=2, shared_xaxes=True, shared-yaxes=True
                     vertical_spacing=0.05,
                     subplot_titles=["", "", ""], 
                    row_heights=[0.8, 0.2], 
@@ -477,6 +477,9 @@ fig.update_layout(
     spikethickness=2
   ),
   xaxis2=dict(
+    type='category',
+    categoryorder='array',
+    categoryarray=df["Date"].tolist(),
     showspikes=False
   ), 
   yaxis=dict(
