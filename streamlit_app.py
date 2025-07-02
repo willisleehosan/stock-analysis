@@ -442,7 +442,7 @@ fig.add_trace(go.Bar(
 for f in fib:
   fig.add_shape(
     type="line", 
-    xref="x2 domain", 
+    xref="paper", 
     yref="y1", 
     x0=0, 
     y0=f, 
