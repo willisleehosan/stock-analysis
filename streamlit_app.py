@@ -178,15 +178,124 @@ def pivLev(df):
   highVals = df["High"].values
   lowVals = df["Low"].values
   indexVals = df.index.to_pydatetime()
+  piv = []
   
-  week0 = np.searchsorted(indexVals, (pd.Timestamp(indexVals[-1]) - pd.tseries.frequencies.to_offset("W") - pd.DateOffset(weeks=1)).to_pydatetime())
-  week1 = np.searchsorted(indexVals, (pd.Timestamp(indexVals[-1]) - pd.tseries.frequencies.to_offset("W")).to_pydatetime())
-  month0 = np.searchsorted(indexVals, (pd.offsets.MonthBegin().rollback(pd.Timestamp(indexVals[-1])) - pd.DateOffset(months=1)).to_pydatetime())
-  month1 = np.searchsorted(indexVals, (pd.offsets.MonthBegin().rollback(pd.Timestamp(indexVals[-1]))).to_pydatetime())
-  st.write(indexVals[week0])
-  st.write(indexVals[week1])
-  st.write(indexVals[month0])
-  st.write(indexVals[month1])
+  week0 = int(np.searchsorted(indexVals, (pd.Timestamp(indexVals[-1]) - pd.tseries.frequencies.to_offset("W") - pd.DateOffset(weeks=1)).to_pydatetime()))
+  week1 = int(np.searchsorted(indexVals, (pd.Timestamp(indexVals[-1]) - pd.tseries.frequencies.to_offset("W")).to_pydatetime()))
+  month0 = int(np.searchsorted(indexVals, (pd.offsets.MonthBegin().rollback(pd.Timestamp(indexVals[-1])) - pd.DateOffset(months=1)).to_pydatetime()))
+  month1 = int(np.searchsorted(indexVals, (pd.offsets.MonthBegin().rollback(pd.Timestamp(indexVals[-1]))).to_pydatetime()))
+
+  wPrevOpen = openVals[week0]
+  wPrevClose = closeVals[week1-1]
+  wPrevHigh = numpy.max(highVals[week0:week1])
+  wPrevLow = numpy.min(lowVals[week0:week1])
+  wCurrOpen = openVals[week1]
+  wP = (wPrevHigh + wPrevLow + wPrevClose) / 3
+  piv.append(wP)
+  piv.append(wP*2 - wPrevLow)
+  piv.append(wP*2 - wPrevHigh)
+  piv.append(wP + wPrevHigh - wPrevLow)
+  piv.append(wP - wPrevHigh + wPrevLow)
+  piv.append(wP*2 + wPrevHigh - wPrevLow*2)
+  piv.append(wP*2 - wPrevHigh*2 + wPrevLow)
+  piv.append(wP*3 + wPrevHigh - wPrevLow*3)
+  piv.append(wP*3 - wPrevHigh*3 + wPrevLow)
+  piv.append(wP*4 + wPrevHigh - wPrevLow*4)
+  piv.append(wP*4 - wPrevHigh*4 + wPrevLow)
+  piv.append(wP + (wPrevHigh - wPrevLow)*0.382)
+  piv.append(wP - (wPrevHigh - wPrevLow)*0.382)
+  piv.append(wP + (wPrevHigh - wPrevLow)*0.618)
+  piv.append(wP - (wPrevHigh - wPrevLow)*0.618)
+  piv.append(wP + (wPrevHigh - wPrevLow)*2)
+  piv.append(wP - (wPrevHigh - wPrevLow)*2)
+  piv.append(wP + (wPrevHigh - wPrevLow)*3)
+  piv.append(wP - (wPrevHigh - wPrevLow)*3)
+  piv.append(wPrevClose + 1.1*(wPrevHigh - wPrevLow)/12)
+  piv.append(wPrevClose - 1.1*(wPrevHigh - wPrevLow)/12)
+  piv.append(wPrevClose + 1.1*(wPrevHigh - wPrevLow)/6)
+  piv.append(wPrevClose - 1.1*(wPrevHigh - wPrevLow)/6)
+  piv.append(wPrevClose + 1.1*(wPrevHigh - wPrevLow)/4)
+  piv.append(wPrevClose - 1.1*(wPrevHigh - wPrevLow)/4)
+  piv.append(wPrevClose + 1.1*(wPrevHigh - wPrevLow)/2)
+  piv.append(wPrevClose - 1.1*(wPrevHigh - wPrevLow)/2)
+  piv.append((wPrevHigh / wPrevLow) * wPrevClose)
+  piv.append(wPrevClose*2 - (wPrevHigh / wPrevLow) * wPrevClose)
+  wP = (wPrevHigh + wPrevLow + wCurrOpen*2) / 4
+  piv.append(wP)
+  piv.append(wP*2 - wPrevLow)
+  piv.append(wP*2 - wPrevHigh)
+  piv.append(wP + wPrevHigh - wPrevLow)
+  piv.append(wP - wPrevHigh + wPrevLow)
+  piv.append(wPrevHigh + (wP - wPrevLow)*2)
+  piv.append(wPrevLow - (wPrevHigh - wP)*2)
+  piv.append(wPrevHigh*2 + (wP - wPrevLow)*2 - wPrevLow)
+  piv.append(wPrevLow*2 - (wPrevHigh - wP)*2 - wPrevHigh)
+  if wPrevOpen == wPrevClose:
+    x = wPrevHigh + wPrevLow + wPrevClose*2
+  elif wPrevClose > wPrevOpen:
+    x = wPrevHigh*2 + wPrevLow + wPrevClose
+  else:
+    x = wPrevLow*2 + wPrevHigh + wPrevClose
+  piv.append(x/4)
+  piv.append(x/2 - wPrevLow)
+  piv.append(x/2 - wPrevHigh)
+  
+  mPrevOpen = openVals[month0]
+  mPrevClose = closeVals[month1-1]
+  mPrevHigh = numpy.max(highVals[month0:month1])
+  mPrevLow = numpy.min(lowVals[month0:month1])
+  mCurrOpen = openVals[month1]
+  mP = (mPrevHigh + mPrevLow + mPrevClose) / 3
+  piv.append(mP)
+  piv.append(mP*2 - mPrevLow)
+  piv.append(mP*2 - mPrevHigh)
+  piv.append(mP + mPrevHigh - mPrevLow)
+  piv.append(mP - mPrevHigh + mPrevLow)
+  piv.append(mP*2 + mPrevHigh - mPrevLow*2)
+  piv.append(mP*2 - mPrevHigh*2 + mPrevLow)
+  piv.append(mP*3 + mPrevHigh - mPrevLow*3)
+  piv.append(mP*3 - mPrevHigh*3 + mPrevLow)
+  piv.append(mP*4 + mPrevHigh - mPrevLow*4)
+  piv.append(mP*4 - mPrevHigh*4 + mPrevLow)
+  piv.append(mP + (mPrevHigh - mPrevLow)*0.382)
+  piv.append(mP - (mPrevHigh - mPrevLow)*0.382)
+  piv.append(mP + (mPrevHigh - mPrevLow)*0.618)
+  piv.append(mP - (mPrevHigh - mPrevLow)*0.618)
+  piv.append(mP + (mPrevHigh - mPrevLow)*2)
+  piv.append(mP - (mPrevHigh - mPrevLow)*2)
+  piv.append(mP + (mPrevHigh - mPrevLow)*3)
+  piv.append(mP - (mPrevHigh - mPrevLow)*3)
+  piv.append(mPrevClose + 1.1*(mPrevHigh - mPrevLow)/12)
+  piv.append(mPrevClose - 1.1*(mPrevHigh - mPrevLow)/12)
+  piv.append(mPrevClose + 1.1*(mPrevHigh - mPrevLow)/6)
+  piv.append(mPrevClose - 1.1*(mPrevHigh - mPrevLow)/6)
+  piv.append(mPrevClose + 1.1*(mPrevHigh - mPrevLow)/4)
+  piv.append(mPrevClose - 1.1*(mPrevHigh - mPrevLow)/4)
+  piv.append(mPrevClose + 1.1*(mPrevHigh - mPrevLow)/2)
+  piv.append(mPrevClose - 1.1*(mPrevHigh - mPrevLow)/2)
+  piv.append((mPrevHigh / mPrevLow) * mPrevClose)
+  piv.append(mPrevClose*2 - (mPrevHigh / mPrevLow) * mPrevClose)
+  mP = (mPrevHigh + mPrevLow + mCurrOpen*2) / 4
+  piv.append(mP)
+  piv.append(mP*2 - mPrevLow)
+  piv.append(mP*2 - mPrevHigh)
+  piv.append(mP + mPrevHigh - mPrevLow)
+  piv.append(mP - mPrevHigh + mPrevLow)
+  piv.append(mPrevHigh + (mP - mPrevLow)*2)
+  piv.append(mPrevLow - (mPrevHigh - mP)*2)
+  piv.append(mPrevHigh*2 + (mP - mPrevLow)*2 - mPrevLow)
+  piv.append(mPrevLow*2 - (mPrevHigh - mP)*2 - mPrevHigh)
+  if mPrevOpen == mPrevClose:
+    x = mPrevHigh + mPrevLow + mPrevClose*2
+  elif mPrevClose > mPrevOpen:
+    x = mPrevHigh*2 + mPrevLow + mPrevClose
+  else:
+    x = mPrevLow*2 + mPrevHigh + mPrevClose
+  piv.append(x/4)
+  piv.append(x/2 - mPrevLow)
+  piv.append(x/2 - mPrevHigh)
+
+  return piv
 
 def rsi(arr, l):
   u = [float("nan")]
@@ -389,7 +498,7 @@ support_best, resistance_best = srSMA(df)
 df["rsi"] = rsi(df["Close"], 14)
 peaks, troughs = zigzag(df)
 fib = fibLev(peaks, troughs)
-pivLev(df)
+piv = pivLev(df)
 obs += gdCross(df, futureDf)
 obs += rsiAn(df, peaks, troughs)
 obs += divDet(df["rsi"].values, peaks, troughs, "rsiwd", "rsibd")
@@ -457,7 +566,7 @@ fig.add_trace(go.Bar(
   name="Volume"
 ), row=2, col=1)
 
-for f in fib:
+for f in (fib+piv):
   fig.add_shape(
     type="line", 
     xref="x2 domain", 
