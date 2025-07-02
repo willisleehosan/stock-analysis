@@ -150,6 +150,28 @@ def zigzag(df):
 
   return peaks, troughs
 
+def fibLev(peaks, troughs):
+  fib = []
+  zz = peaks + troughs
+  zz.sort(key=lambda a: a[0])
+  for i in range(len(zz)-1, len(zz)-6, -1):
+    start = zz[i-1][1]
+    end = zz[i][1]
+    fib.append(end)
+    fib.append(start*0.236 + end*0.764)
+    fib.append(start*0.382 + end*0.618)
+    fib.append(start*0.5 + end*0.5)
+    fib.append(start*0.618 + end*0.382)
+    fib.append(start*0.786 + end*0.214)
+    fib.append(start)
+    fib.append(start*1.272 - end*0.272)
+    fib.append(start*1.618 - end*0.618)
+    fib.append(start*2.618 - end*1.618)
+    fib.append(start*3.618 - end*2.618)
+    fib.append(start*4.236 - end*3.236)
+
+  return fib
+
 def rsi(arr, l):
   u = [float("nan")]
   d = [float("nan")]
@@ -350,6 +372,7 @@ df["100SMA"] = df["Close"].rolling(window=100).mean()
 support_best, resistance_best = srSMA(df)
 df["rsi"] = rsi(df["Close"], 14)
 peaks, troughs = zigzag(df)
+fib = fibLev(peaks, troughs)
 obs += gdCross(df, futureDf)
 obs += rsiAn(df, peaks, troughs)
 obs += divDet(df["rsi"].values, peaks, troughs, "rsiwd", "rsibd")
@@ -363,10 +386,11 @@ df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 c1, c2 = st.columns(2)
 
 # basic plot
-fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
+fig = make_subplots(rows=2, cols=2, shared_xaxes=True,
                     vertical_spacing=0.05,
                     subplot_titles=["", ""], 
-                   row_heights=[0.8, 0.2])
+                   row_heights=[0.8, 0.2], 
+                   column_width=[0.95, 0.05])
 
 df = pd.concat([df, futureDf], ignore_index=True)
 fig.add_trace(go.Candlestick(
@@ -415,6 +439,21 @@ fig.add_trace(go.Bar(
   name="Volume"
 ), row=2, col=1)
 
+for f in fib:
+  fig.add_shape(
+    type="line", 
+    xref="x2 domain", 
+    yref="y1", 
+    x0=0, 
+    y0=f, 
+    x1=1, 
+    y1=f, 
+    line=dict(
+      color="rgba(255, 255, 0, 0.5)", 
+      width=1
+    )
+  )
+
 # Add layout
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
@@ -438,15 +477,7 @@ fig.update_layout(
     spikethickness=2
   ),
   xaxis2=dict(
-    type="category", 
-    categoryorder="array", 
-    categoryarray=df["Date"].tolist(), 
-    showspikes=True,
-    spikecolor='rgba(255,255,255,0.3)',
-    spikedash='solid',
-    spikesnap='cursor',
-    spikemode='across',
-    spikethickness=2
+    showspikes=False
   ), 
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
