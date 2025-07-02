@@ -478,9 +478,12 @@ fig.update_layout(
     spikethickness=2
   ),
   xaxis2=dict(
-    type='category',
-    categoryorder='array',
-    categoryarray=df["Date"].tolist(),
+    showspikes=False
+  ),
+  xaxis3=dict(
+    type="category", 
+    categoryorder="array", 
+    categoryarray=df["Date"].tolist(), 
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='solid',
@@ -488,9 +491,6 @@ fig.update_layout(
     spikemode='across',
     spikethickness=2
   ), 
-  xaxis3=dict(
-    showspikes=False
-  ),
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
     showspikes=True,
