@@ -387,6 +387,7 @@ c1, c2 = st.columns(2)
 
 # basic plot
 fig = make_subplots(rows=2, cols=2, shared_xaxes=True, shared_yaxes=True,
+                    horizontal_spacing=0
                     vertical_spacing=0.05,
                     subplot_titles=["", "", ""], 
                    row_heights=[0.8, 0.2], 
