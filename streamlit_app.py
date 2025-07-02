@@ -172,6 +172,22 @@ def fibLev(peaks, troughs):
 
   return fib
 
+def pivLev(df):
+  openVals = df["Open"].values
+  closeVals = df["Close"].values
+  highVals = df["High"].values
+  lowVals = df["Low"].values
+  indexVals = df.index.to_pydatetime()
+  
+  week0 = np.searchsorted(indexVals, (pd.Timestamp(indexVals[-1]) - pd.tseries.frequencies.to_offset("W") - pd.DateOffset(weeks=1)).to_pydatetime())
+  week1 = np.searchsorted(indexVals, (pd.Timestamp(indexVals[-1]) - pd.tseries.frequencies.to_offset("W")).to_pydatetime())
+  month0 = np.searchsorted(indexVals, (pd.offsets.MonthBegin().rollback(pd.Timestamp(indexVals[-1])) - pd.DateOffset(months=1)).to_pydatetime())
+  month1 = np.searchsorted(indexVals, (pd.offsets.MonthBegin().rollback(pd.Timestamp(indexVals[-1]))).to_pydatetime())
+  st.write(indexVals[week0])
+  st.write(indexVals[week1])
+  st.write(indexVals[month0])
+  st.write(indexVals[month1])
+
 def rsi(arr, l):
   u = [float("nan")]
   d = [float("nan")]
@@ -373,6 +389,7 @@ support_best, resistance_best = srSMA(df)
 df["rsi"] = rsi(df["Close"], 14)
 peaks, troughs = zigzag(df)
 fib = fibLev(peaks, troughs)
+pivLev(df)
 obs += gdCross(df, futureDf)
 obs += rsiAn(df, peaks, troughs)
 obs += divDet(df["rsi"].values, peaks, troughs, "rsiwd", "rsibd")
@@ -450,7 +467,7 @@ for f in fib:
     x1=1, 
     y1=f, 
     line=dict(
-      color="rgba(255, 255, 0, 0.5)", 
+      color="rgba(255, 255, 0, 0.3)", 
       width=1
     ), 
     row=1, col=2
