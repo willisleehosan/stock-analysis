@@ -187,8 +187,8 @@ def pivLev(df):
 
   wPrevOpen = openVals[week0]
   wPrevClose = closeVals[week1-1]
-  wPrevHigh = numpy.max(highVals[week0:week1])
-  wPrevLow = numpy.min(lowVals[week0:week1])
+  wPrevHigh = np.max(highVals[week0:week1])
+  wPrevLow = np.min(lowVals[week0:week1])
   wCurrOpen = openVals[week1]
   wP = (wPrevHigh + wPrevLow + wPrevClose) / 3
   piv.append(wP)
@@ -242,8 +242,8 @@ def pivLev(df):
   
   mPrevOpen = openVals[month0]
   mPrevClose = closeVals[month1-1]
-  mPrevHigh = numpy.max(highVals[month0:month1])
-  mPrevLow = numpy.min(lowVals[month0:month1])
+  mPrevHigh = np.max(highVals[month0:month1])
+  mPrevLow = np.min(lowVals[month0:month1])
   mCurrOpen = openVals[month1]
   mP = (mPrevHigh + mPrevLow + mPrevClose) / 3
   piv.append(mP)
