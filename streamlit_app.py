@@ -477,6 +477,9 @@ fig.update_layout(
     spikethickness=2
   ),
   xaxis2=dict(
+    type='category',
+    categoryorder='array',
+    categoryarray=df["Date"].tolist(),
     showspikes=False
   ), 
   yaxis=dict(
