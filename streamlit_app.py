@@ -490,7 +490,7 @@ fig.update_layout(
   ), 
   xaxis3=dict(
     showspikes=False
-  )
+  ),
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
     showspikes=True,
