@@ -451,7 +451,8 @@ for f in fib:
     line=dict(
       color="rgba(255, 255, 0, 0.5)", 
       width=1
-    )
+    ), 
+    row=1, col=2
   )
 
 # Add layout
@@ -463,7 +464,7 @@ fig.update_layout(
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
   spikedistance=-1,
-  xaxis1=dict(
+  xaxis=dict(
     type='category',
     categoryorder='array',
     categoryarray=df["Date"].tolist(),
