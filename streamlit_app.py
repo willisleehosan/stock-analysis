@@ -388,7 +388,7 @@ c1, c2 = st.columns(2)
 # basic plot
 fig = make_subplots(rows=2, cols=2, shared_xaxes=True,
                     vertical_spacing=0.05,
-                    subplot_titles=["", ""], 
+                    subplot_titles=["", "", ""], 
                    row_heights=[0.8, 0.2], 
                    column_width=[0.95, 0.05])
 
@@ -442,7 +442,7 @@ fig.add_trace(go.Bar(
 for f in fib:
   fig.add_shape(
     type="line", 
-    xref="paper", 
+    xref="x2 domain", 
     yref="y1", 
     x0=0, 
     y0=f, 
