@@ -459,7 +459,7 @@ for f in fib:
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   yaxis1_title="Price",
-  yaxis2_title="Volume", 
+  yaxis3_title="Volume", 
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
@@ -481,8 +481,16 @@ fig.update_layout(
     type='category',
     categoryorder='array',
     categoryarray=df["Date"].tolist(),
-    showspikes=False
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='solid',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=2
   ), 
+  xaxis3=dict(
+    showspikes=False
+  )
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
     showspikes=True,
@@ -493,6 +501,10 @@ fig.update_layout(
     spikethickness=2
   ), 
   yaxis2=dict(
+    range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
+    showspikes=False
+  ), 
+  yaxis3=dict(
     range=[0, 1.2*df["Volume"].iloc[-91:].max()],
     showticklabels=False, 
     ticks="", 
