@@ -603,7 +603,7 @@ fig.update_layout(
     spikesnap='cursor',
     spikemode='across',
     spikethickness=1, 
-    spikesides=True
+    spikemode="across"
   ),
   xaxis2=dict(
     showspikes=False
@@ -618,7 +618,7 @@ fig.update_layout(
     spikesnap='cursor',
     spikemode='across',
     spikethickness=1, 
-    spikesides=True
+    spikemode="across"
   ), 
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
@@ -628,7 +628,7 @@ fig.update_layout(
     spikesnap='cursor',
     spikemode='across',
     spikethickness=1, 
-    spikesides=True
+    spikemode="across"
   ), 
   yaxis2=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
