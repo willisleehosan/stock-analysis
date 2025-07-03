@@ -636,7 +636,6 @@ fig.update_layout(
     spikethickness=1
   ), 
   yaxis2=dict(
-    autorange=False, 
     showspikes=True, 
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='dash',
