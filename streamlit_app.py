@@ -633,6 +633,7 @@ fig.update_layout(
   ), 
   yaxis2=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
+    showspikes=True, 
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='dash',
     spikesnap='cursor',
@@ -839,6 +840,8 @@ obsPlot["rsi"].add_trace(go.Scatter(
   line=dict(width=1.5, color="white"),
   hoverinfo="none"
 ), row=2, col=1)
+
+obsPlot["rsi"].update_traces(xaxis="x1")
 
 obsPlot["rsi"].update_layout(
   title="RSI plot",
