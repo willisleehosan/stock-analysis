@@ -584,6 +584,8 @@ for f in (fib+piv):
   )
 
 # Add layout
+fig.update_traces(xaxis="x1", yaxis="y1")
+
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
   yaxis1_title="Price",
@@ -617,8 +619,7 @@ fig.update_layout(
     spikedash='dash',
     spikesnap='cursor',
     spikemode='across',
-    spikethickness=1, 
-    matches="x"
+    spikethickness=1
   ), 
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
@@ -635,8 +636,7 @@ fig.update_layout(
     spikedash='dash',
     spikesnap='cursor',
     spikemode='across',
-    spikethickness=1,
-    matches="y"
+    spikethickness=1
   ), 
   yaxis3=dict(
     range=[0, 1.2*df["Volume"].iloc[-91:].max()],
