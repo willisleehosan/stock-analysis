@@ -617,7 +617,8 @@ fig.update_layout(
     spikedash='dash',
     spikesnap='cursor',
     spikemode='across',
-    spikethickness=1
+    spikethickness=1, 
+    matches="x"
   ), 
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
@@ -630,7 +631,8 @@ fig.update_layout(
   ), 
   yaxis2=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
-    showspikes=False
+    showspikes=False, 
+    matches="y"
   ), 
   yaxis3=dict(
     range=[0, 1.2*df["Volume"].iloc[-91:].max()],
