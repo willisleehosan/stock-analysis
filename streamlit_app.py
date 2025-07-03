@@ -624,6 +624,7 @@ fig.update_layout(
   ), 
   yaxis=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
+    autorange=False, 
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='dash',
@@ -632,6 +633,7 @@ fig.update_layout(
     spikethickness=1
   ), 
   yaxis2=dict(
+    autorange=False, 
     showspikes=True, 
     spikecolor='rgba(255,255,255,0.3)',
     spikedash='dash',
@@ -640,6 +642,7 @@ fig.update_layout(
     spikethickness=1
   ), 
   yaxis3=dict(
+    autorange=False, 
     range=[0, 1.2*df["Volume"].iloc[-91:].max()],
     showticklabels=False, 
     ticks="", 
