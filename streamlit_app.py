@@ -589,7 +589,7 @@ fig.update_layout(
   yaxis3_title="Volume", 
   height=600,
   xaxis_rangeslider_visible=False,
-  hovermode="x unified",
+  hovermode="closest",
   hoversubplots="overlaying", 
   spikedistance=-1,
   xaxis=dict(
@@ -674,12 +674,7 @@ marketSsFig.update_layout(
     tickmode="array", 
     tickvals=[], 
     showticklabels=False,
-    showspikes=True,
-    spikecolor='rgba(255,255,255,0.3)',
-    spikedash='solid',
-    spikesnap='cursor',
-    spikemode='across',
-    spikethickness=2
+    showspikes=False
   ), 
   yaxis=dict(
     showticklabels=False, 
