@@ -642,8 +642,7 @@ fig.update_layout(
     spikedash='dash',
     spikesnap='cursor',
     spikemode='across',
-    spikethickness=1, 
-    matches="y1"
+    spikethickness=1
   ), 
   yaxis3=dict(
     autorange=False, 
