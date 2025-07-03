@@ -598,7 +598,7 @@ fig.update_layout(
     autorange=False,
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
-    spikedash='dash',
+    spikedash='solid',
     spikesnap='cursor',
     spikemode='across',
     spikethickness=1
@@ -612,7 +612,7 @@ fig.update_layout(
     categoryarray=df["Date"].tolist(), 
     showspikes=True,
     spikecolor='rgba(255,255,255,0.3)',
-    spikedash='dash',
+    spikedash='solid',
     spikesnap='cursor',
     spikemode='across',
     spikethickness=1, 
@@ -629,12 +629,7 @@ fig.update_layout(
   ), 
   yaxis2=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
-    showspikes=True,
-    spikecolor='rgba(255,255,255,0.3)',
-    spikedash='dash',
-    spikesnap='cursor',
-    spikemode='across',
-    spikethickness=1,
+    showspikes=False
     matches="y"
   ), 
   yaxis3=dict(
