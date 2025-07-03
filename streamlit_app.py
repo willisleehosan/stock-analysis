@@ -658,6 +658,8 @@ fig.update_layout(
   )
 )
 
+st.write(fig.layout)
+
 marketSsFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
                              vertical_spacing=0.05, 
                              subplot_titles=[""])
