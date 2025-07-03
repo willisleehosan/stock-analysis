@@ -563,7 +563,8 @@ fig.add_trace(go.Bar(
   x=df["Date"], 
   y=df["Volume"], 
   marker_color=["green" if close >= open_ else "red" for open_, close in zip(df["Open"], df["Close"])], 
-  name="Volume"
+  name="Volume", 
+  hoverinfo="none"
 ), row=2, col=1)
 
 for f in (fib+piv):
