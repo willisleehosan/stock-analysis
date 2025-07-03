@@ -589,7 +589,6 @@ fig.update_layout(
   yaxis3_title="Volume", 
   height=600,
   xaxis_rangeslider_visible=False,
-  hovermode="x unified",
   hoversubplots="overlaying", 
   xaxis=dict(
     type='category',
@@ -630,7 +629,12 @@ fig.update_layout(
   ), 
   yaxis2=dict(
     range=[1.2*df["Low"].iloc[-91:].min() - 0.2*df["High"].iloc[-91:].max(), 1.2*df["High"].iloc[-91:].max() - 0.2*df["Low"].iloc[-91:].min()],
-    showspikes=False, 
+    showspikes=True,
+    spikecolor='rgba(255,255,255,0.3)',
+    spikedash='dash',
+    spikesnap='cursor',
+    spikemode='across',
+    spikethickness=1
     matches="y"
   ), 
   yaxis3=dict(
