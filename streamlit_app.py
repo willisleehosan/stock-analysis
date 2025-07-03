@@ -330,6 +330,8 @@ def rsiAn(df, peaks, troughs):
     else:
       if rsiVals[i] >= 70:
         startD = i
+  if startD:
+    rsiObs.append(["rsiob", startD, len(rsiVals)-1])
 
   # oversold
   startD = None
@@ -341,6 +343,8 @@ def rsiAn(df, peaks, troughs):
     else:
       if rsiVals[i] <= 30:
         startD = i
+  if startD:
+    rsiObs.append(["rsios", startD, len(rsiVals)-1])
 
   return rsiObs
 
@@ -515,7 +519,6 @@ c1, c2 = st.columns(2)
 fig = make_subplots(rows=2, cols=2, shared_xaxes=True, shared_yaxes=True,
                     horizontal_spacing=0,
                     vertical_spacing=0.05,
-                    subplot_titles=["", "", ""], 
                    row_heights=[0.8, 0.2], 
                    column_width=[0.95, 0.05])
 
