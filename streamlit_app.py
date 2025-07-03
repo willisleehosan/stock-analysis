@@ -584,7 +584,7 @@ for f in (fib+piv):
   )
 
 # Add layout
-fig.update_traces(xaxis="x1", yaxis="y1")
+fig.update_traces(xaxis="x1")
 
 fig.update_layout(
   title=f"{ticker} Alpha-Beta Analysis (1Y) | α = {alpha:.5f}, β = {beta:.2f}",
