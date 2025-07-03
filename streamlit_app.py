@@ -512,7 +512,7 @@ df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
 c1, c2 = st.columns(2)
 
 # basic plot
-fig = make_subplots(rows=2, cols=2, shared_xaxes="all", shared_yaxes="all",
+fig = make_subplots(rows=2, cols=2, shared_xaxes=True, shared_yaxes=True,
                     horizontal_spacing=0,
                     vertical_spacing=0.05,
                     subplot_titles=["", "", ""], 
@@ -639,7 +639,8 @@ fig.update_layout(
     spikedash='dash',
     spikesnap='cursor',
     spikemode='across',
-    spikethickness=1
+    spikethickness=1, 
+    matches="y1"
   ), 
   yaxis3=dict(
     autorange=False, 
@@ -648,10 +649,11 @@ fig.update_layout(
     ticks="", 
     showgrid=False, 
     zeroline=False
+  ), 
+  yaxis4=dict(
+    matches="y2"
   )
 )
-
-st.write(fig.layout)
 
 marketSsFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
                              vertical_spacing=0.05, 
