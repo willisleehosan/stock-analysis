@@ -589,6 +589,7 @@ fig.update_layout(
   yaxis3_title="Volume", 
   height=600,
   xaxis_rangeslider_visible=False,
+  spikedistance=-1,
   hoversubplots="overlaying", 
   xaxis=dict(
     type='category',
