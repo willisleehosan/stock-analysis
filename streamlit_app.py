@@ -590,6 +590,7 @@ fig.update_layout(
   height=600,
   xaxis_rangeslider_visible=False,
   hovermode="x unified",
+  hoversubplots="overlaying", 
   spikedistance=-1,
   xaxis=dict(
     type='category',
