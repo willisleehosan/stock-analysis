@@ -570,6 +570,13 @@ fig.add_trace(go.Bar(
   hoverinfo="none"
 ), row=2, col=1)
 
+fig.add_trace(go.Scatter(
+  x=[0], 
+  y=[0], 
+  name="_", 
+  visible=False
+), row=1, col=2)
+
 for f in (fib+piv):
   fig.add_shape(
     type="line", 
@@ -655,8 +662,6 @@ fig.update_layout(
     matches="y2"
   )
 )
-
-st.write(fig.layout)
 
 marketSsFig = make_subplots(rows=1, cols=1, shared_xaxes=True, 
                              vertical_spacing=0.05, 
