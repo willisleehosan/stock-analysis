@@ -1049,16 +1049,6 @@ for ob in obs:
 # --------------------------------------------------
 
 with c1: 
-  xLab = st.empty()
-  yLab = st.empty()
-  hoverDat = plotly_events(fig, click_event=True, key="hover")
-  hoverX = None
-  hoverY = None
-  if hoverDat and isinstance(hoverDat, list):
-    hoverX = hoverDat[0].get("x")
-    hoverY = hoverDat[0].get("y")
-  xLab.markdown(f"X: {hoverX}")
-  yLab.markdown(f"Y: {hoverY}")
   st.plotly_chart(fig, use_container_width=True)
 
 with c2: 
