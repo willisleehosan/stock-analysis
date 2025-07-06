@@ -1048,7 +1048,18 @@ for ob in obs:
 # --------------------------------------------------
 
 with c1: 
+  xLab = st.empty()
+  yLab = st.empty()
   st.plotly_chart(fig, use_container_width=True)
+  hoverDat = st.session_state.get("hover_data", None)
+  if hoverDat:
+    xVal = hoverDat["points"][0]["x"]
+    yVal = hoverDat["points"][0]["y"]
+    xLab.markdown(f"X: {xVal}")
+    yLab.markdown(f"Y: {yVal}")
+  else:
+    xLab.markdown("X: ")
+    yLab.markdown("Y: ")
 
 with c2: 
   st.plotly_chart(marketSsFig, use_container_width=True)
