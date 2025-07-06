@@ -1051,7 +1051,7 @@ for ob in obs:
 with c1: 
   xLab = st.empty()
   yLab = st.empty()
-  hoverDat = plotly_events(fig, click_event=False, hover_event=True, key="hover")
+  hoverDat = plotly_events(fig, click_event=True, key="hover")
   hoverX = None
   hoverY = None
   if hoverDat and isinstance(hoverDat, list):
