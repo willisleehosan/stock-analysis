@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_extras.stylable_container import stylable_container
-import streamlit_plotly_events as plotly_events
+from streamlit_plotly_events import plotly_events
 import math
 import bisect
 import pandas as pd
